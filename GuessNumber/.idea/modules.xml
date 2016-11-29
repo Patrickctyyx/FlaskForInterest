@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/GuessNumber.iml" filepath="$PROJECT_DIR$/.idea/GuessNumber.iml" />
+      <module fileurl="file://$USER_HOME$/视频/JNUGeek/.idea/JNUGeek.iml" filepath="$USER_HOME$/视频/JNUGeek/.idea/JNUGeek.iml" />
+    </modules>
+  </component>
+</project>
