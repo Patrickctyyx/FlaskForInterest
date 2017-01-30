@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{ user.name }}'s Profile{% endblock %}
+
+{% block tip %}{{ user.name }}{% endblock %}
+
+{% block explain %}
+    {% if user.introduction %}
+    {{ user.introduction }}
+    {% else %}
+    这个人很懒哦，还没有个人介绍。
+    {% endif %}
+    <br />
+    {% if user.account == current_user %}
+        {% if user.student_id %}
+        <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">
+            Edit Profile
+        </a>
+        {% else %}
+        <a class="btn btn-default" href="{{ url_for('.complete_profile') }}">
+            Complete Profile
+        </a>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block page_content %}
+    <p>Last Seen: {{ user.account.last_seen }}</p>
+{% endblock %}

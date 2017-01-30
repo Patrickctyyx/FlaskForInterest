@@ -1,0 +1,13 @@
+Dear,
+
+Welcome to Patrick's Space!
+
+To confirm your account please click on the following link:
+
+{{ url_for('auth.change_mail', token=token, email=email, _external=True) }}
+
+Sincerely,
+
+Patrick
+
+Notice: replies to this email address are not monitored.

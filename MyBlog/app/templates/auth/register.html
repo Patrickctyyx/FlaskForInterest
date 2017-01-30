@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Patrick's Space - Register{% endblock %}
+
+{% block tip %}Register{% endblock %}
+
+{% block explain %}Register here~{% endblock %}
+
+{% block page_content %}
+    {{ wtf.quick_form(form) }}
+{% endblock %}

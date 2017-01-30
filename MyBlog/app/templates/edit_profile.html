@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Patrick's Space - Edit Profile{% endblock %}
+
+{% block tip %}Edit Your Profile{% endblock %}
+
+{% block explain %}Edit your profile here~{% endblock %}
+
+{% block page_content %}
+    {{ wtf.quick_form(form) }}
+{% endblock %}

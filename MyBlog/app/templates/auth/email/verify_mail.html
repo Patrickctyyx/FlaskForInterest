@@ -1,0 +1,8 @@
+<p>Dear,</p>
+<p>Welcome to <b>Patrick's Space</b>!</p>
+<p>To verify your account please <a href="{{ url_for('auth.change_mail', token=token, email=email, _external=True) }}">click here</a>.</p>
+<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>{{ url_for('auth.change_mail', token=token, email=email, _external=True) }}</p>
+<p>Sincerely,</p>
+<p>Patrick</p>
+<p><small>Note: replies to this email address are not monitored.</small></p>
