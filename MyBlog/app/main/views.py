@@ -1,10 +1,11 @@
 from flask import render_template, redirect, url_for, flash, abort
 
 from . import main
-from .forms import ContactMeForm, CompleteProfileField, EditProfileField
+from .forms import ContactMeForm, CompleteProfileField, EditProfileField, EditProfileAdminForm
 from .. import db
-from ..models import ContactMeInfo, UserInfo
+from ..models import ContactMeInfo, UserInfo, Account, Role
 from flask_login import login_required, current_user
+from ..decorators import admin_required
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -91,3 +92,43 @@ def edit_profile():
     form.major.data = userinfo.major
     form.introduction.data = userinfo.introduction
     return render_template('edit_profile.html', form=form)
+
+
+@main.route('/edit-profile/<uid>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_profile_admin(uid):
+    user = Account.query.get_or_404(uid)
+    form = EditProfileAdminForm(user=user)
+    userinfo = user.userinfo
+    if form.validate_on_submit():
+        userinfo.name = form.name.data
+        userinfo.email = form.email.data
+        user.confirmed = form.confirmed.data
+        user.role = Role.query.get(form.role.data)
+        userinfo.phone = form.phone.data
+        userinfo.student_id = form.student_id.data
+        userinfo.grade = form.grade.data
+        userinfo.department = form.department.data
+        userinfo.school = form.school.data
+        userinfo.major = form.major.data
+        userinfo.qq = form.qq.data
+        userinfo.introduction = form.introduction.data
+        db.session.add(userinfo)
+        db.session.commit()
+        flash('信息修改成功！')
+        return redirect(url_for('.user', username=userinfo.name))
+    form.name.data = userinfo.name
+    form.email.data = userinfo.email
+    form.confirmed.data = user.confirmed
+    form.role.data = user.role_id
+    form.phone.data = userinfo.phone
+    form.student_id.data = userinfo.student_id
+    form.grade.data = userinfo.grade
+    form.department.data = userinfo.department
+    form.school.data = userinfo.school
+    form.qq.data = userinfo.qq
+    form.major.data = userinfo.major
+    form.introduction.data = userinfo.introduction
+    return render_template('edit_profile.html', form=form, user=user)
+
