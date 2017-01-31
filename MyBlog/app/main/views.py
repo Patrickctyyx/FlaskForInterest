@@ -1,9 +1,9 @@
 from flask import render_template, redirect, url_for, flash, abort
 
 from . import main
-from .forms import ContactMeForm, CompleteProfileField, EditProfileField, EditProfileAdminForm
+from .forms import ContactMeForm, CompleteProfileField, EditProfileField, EditProfileAdminForm, PostForm
 from .. import db
-from ..models import ContactMeInfo, UserInfo, Account, Role
+from ..models import ContactMeInfo, UserInfo, Account, Role, Permission, Post
 from flask_login import login_required, current_user
 from ..decorators import admin_required
 
@@ -11,6 +11,12 @@ from ..decorators import admin_required
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = ContactMeForm()
+    form2 = PostForm()
+    if current_user.can(Permission.WRITE_ARTICLES) and form2.validate_on_submit():
+        post = Post(body=form2.body.data, author=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('.index'))
     if form.validate_on_submit():
         info = ContactMeInfo.query.filter_by(phone=form.phone.data).first()
         if info is None:
@@ -27,7 +33,8 @@ def index():
         else:
             flash('您已经提交过个人信息。')
         return redirect(url_for('.index'))  # 这里的.前面是命名空间，相当于main.index，表示是main这个蓝图下的
-    return render_template('home.html', form=form)
+    posts = Post.query.order_by(Post.cred_at).all()
+    return render_template('home.html', form=form, form2=form2, posts=posts)
 
 
 @main.route('/user/<username>')
@@ -131,4 +138,3 @@ def edit_profile_admin(uid):
     form.major.data = userinfo.major
     form.introduction.data = userinfo.introduction
     return render_template('edit_profile.html', form=form, user=user)
-

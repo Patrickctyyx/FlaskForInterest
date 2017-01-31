@@ -6,6 +6,7 @@
 {% block tip %}{{ user.name }}{% endblock %}
 
 {% block explain %}
+    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}"><br />
     {% if user.introduction %}
     {{ user.introduction }}
     {% else %}

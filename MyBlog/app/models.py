@@ -1,11 +1,12 @@
 from . import db
 import uuid
+import hashlib
 import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from . import login_manger
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app
+from flask import current_app, request
 
 
 @login_manger.user_loader
@@ -68,6 +69,7 @@ class Account(db.Model, UserMixin):
     role_id = db.Column(db.Integer, db.ForeignKey('Role.id'))
     # 两边都要引用就用back_populates
     userinfo = db.relationship('UserInfo', back_populates='account', uselist=False)  # uselist=False表示一对一
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     def __init__(self, **kwargs):
         super(Account, self).__init__(**kwargs)
@@ -134,6 +136,7 @@ class UserInfo(db.Model):
     __tablename__ = 'UserInfo'
 
     uid = db.Column(db.String(36), db.ForeignKey(Account.uid), primary_key=True)
+    avatar_hash = db.Column(db.String(32))
     name = db.Column(db.String(64), unique=True)
     phone = db.Column(db.String(16), unique=True)
     email = db.Column(db.String(64), unique=True)
@@ -146,6 +149,19 @@ class UserInfo(db.Model):
     introduction = db.Column(db.Text)
 
     account = db.relationship('Account', back_populates='userinfo', uselist=False)
+
+    def __init__(self, **kwargs):
+        if self.email is not None and self.avatar_hash is None:
+            self.avatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
+
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        if request.is_secure:
+            url = 'https://s.gravatar.com/avatar'
+        else:
+            url = 'http://www.gravatar.com/avatar'
+        hash = self.avatar_hash or hashlib.md5(self.email.encode('utf-8')).hexdigest()
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+            url=url, hash=hash, size=size, default=default, rating=rating)
 
 
 class Role(db.Model):
@@ -178,3 +194,13 @@ class Role(db.Model):
             role.default = roles[r][1]
             db.session.add(role)
         db.session.commit()
+
+
+class Post(db.Model):
+
+    __tablename__ = 'Post'
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    cred_at = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
+    author_uid = db.Column(db.String(36), db.ForeignKey(Account.uid))

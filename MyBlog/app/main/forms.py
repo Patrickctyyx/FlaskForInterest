@@ -64,3 +64,8 @@ class EditProfileAdminForm(FlaskForm):
                 UserInfo.query.filter_by(email=field.data).first():
             raise ValidationError('Email已经存在！')
 
+
+class PostForm(FlaskForm):
+
+    body = TextAreaField('Got some inspiration?', validators=[DataRequired()])
+    submit = SubmitField('Submit')

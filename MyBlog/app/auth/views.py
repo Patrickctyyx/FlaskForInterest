@@ -1,5 +1,6 @@
 from . import auth
 from .. import db
+import hashlib
 from ..models import Account, UserInfo, Verify, Role
 from ..emails import send_email
 from .forms import LoginForm, RegisterForm, ChangePassForm, VerifyEmailForm, ResetPassForm
@@ -170,6 +171,7 @@ def change_mail(token, email):
         flash('You have verified your account. And you can change your email now!')
         userinfo = UserInfo.query.filter_by(uid=current_user.uid).first()
         userinfo.email = email
+        userinfo.avatar_hash = hashlib.md5(email.encode('utf-8')).hexdigest()
         db.session.add(userinfo)
         db.session.commit()
         flash('成功修改邮箱！')
