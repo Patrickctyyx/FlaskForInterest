@@ -74,8 +74,7 @@ class Account(db.Model, UserMixin):
     def __init__(self, **kwargs):
         super(Account, self).__init__(**kwargs)
         if self.role is None:
-            if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
+            self.role = Role.query.filter_by(default=True).first()
 
     @property  # 只读函数
     def password(self):
@@ -119,6 +118,28 @@ class Account(db.Model, UserMixin):
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)
+
+    @staticmethod
+    def generate_fake(count=100):
+        from sqlalchemy.exc import IntegrityError
+        from random import seed
+        import forgery_py
+
+        seed()
+        for i in range(count):
+            u = Account(uid=str(uuid.uuid4()),
+                        password=forgery_py.lorem_ipsum.word(),
+                        confirmed=True)
+            db.session.add(u)
+            db.session.flush()
+            info = UserInfo(uid=u.uid,
+                            email=forgery_py.internet.email_address(),
+                            name=forgery_py.name.full_name())
+            db.session.add(info)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -204,3 +225,18 @@ class Post(db.Model):
     body = db.Column(db.Text)
     cred_at = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
     author_uid = db.Column(db.String(36), db.ForeignKey(Account.uid))
+
+    @staticmethod
+    def generate_fake(count=100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        user_count = Account.query.count()
+        for i in range(count):
+            u = Account.query.offset(randint(0, user_count - 1)).first()
+            p = Post(body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
+                     cred_at=forgery_py.date.date(True),
+                     author=u)
+            db.session.add(p)
+            db.session.commit()

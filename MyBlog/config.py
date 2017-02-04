@@ -9,6 +9,7 @@ class Config:
     FLASK_MAIL_SUBJECT_PREFIX = '[Patrick]'
     FLASK_MAIL_SENDER = 'Patrick <{}>'.format(os.environ.get('MAIL_USERNAME'))
     FLASK_ADMIN = os.environ.get('MAIL_USERNAME')
+    FLASK_POSTS_PER_PAGE = 10
 
     @staticmethod
     def init_app(app):
@@ -30,7 +31,6 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'cty.sqlite')
 
 

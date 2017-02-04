@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block title %}{{ user.name }}'s Profile{% endblock %}
 
@@ -32,5 +33,10 @@
 {% endblock %}
 
 {% block page_content %}
+    <h3>Posts by: {{ user.name }}</h3>
+    {% include '_posts.html' %}
+    <div class="pagination">
+        {{ macros.pagination_widget(pagination, '.index') }}
+    </div>
     <p>Last Seen: {{ user.account.last_seen }}</p>
 {% endblock %}

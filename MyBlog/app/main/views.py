@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, abort
+from flask import render_template, redirect, url_for, flash, abort, request, current_app
 
 from . import main
 from .forms import ContactMeForm, CompleteProfileField, EditProfileField, EditProfileAdminForm, PostForm
@@ -26,15 +26,15 @@ def index():
                                  comment=form.comment.data if form.comment.data else None)
             db.session.add(info)
             db.session.commit()
-            try:
-                db.session.commit()
-            except:
-                flash('由于玄学问题，提交失败。')
         else:
             flash('您已经提交过个人信息。')
         return redirect(url_for('.index'))  # 这里的.前面是命名空间，相当于main.index，表示是main这个蓝图下的
-    posts = Post.query.order_by(Post.cred_at).all()
-    return render_template('home.html', form=form, form2=form2, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.order_by(Post.cred_at.desc()).paginate(
+        page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    return render_template('home.html', form=form, form2=form2, posts=posts, pagination=pagination)
 
 
 @main.route('/user/<username>')
@@ -42,7 +42,13 @@ def user(username):
     user = UserInfo.query.filter_by(name=username).first()
     if user is None:
         abort(404)
-    return render_template('user.html', user=user)
+    page = request.args.get('page', 1, type=int)
+    pagination = Account.query.get(user.uid).posts.order_by(Post.cred_at.desc()).paginate(
+        page, per_page=current_app.config['FLASK_POSTS_PER_PAGE'],
+        error_out=False)
+    posts = pagination.items
+    # posts = Account.query.get(user.uid).posts.order_by(Post.cred_at.desc()).all()
+    return render_template('user.html', user=user, posts=posts, pagination=pagination)
 
 
 @main.route('/complete-profile', methods=['GET', 'POST'])
