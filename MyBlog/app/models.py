@@ -2,6 +2,8 @@ from . import db
 import uuid
 import hashlib
 import datetime
+import bleach
+from markdown import markdown
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from . import login_manger
@@ -223,6 +225,7 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     cred_at = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
     author_uid = db.Column(db.String(36), db.ForeignKey(Account.uid))
 
@@ -240,3 +243,18 @@ class Post(db.Model):
                      author=u)
             db.session.add(p)
             db.session.commit()
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        # markdown()把Markdown文本转换为html
+        # 然后用bleach.clean()来删除不在白名单的标签
+        # 最后bleach.linkify()把纯文本链接转化为<a>链接
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+# 添加到sqlalchemy的监视中，只要Post的body字段设置新值，函数就会自动调用
+db.event.listen(Post.body, 'set', Post.on_changed_body)

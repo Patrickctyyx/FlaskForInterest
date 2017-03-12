@@ -18,3 +18,8 @@
     <h3>Contact Me:</h3>
     {{ wtf.quick_form(form) }}
 {% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ pagedown.include_pagedown() }}
+{% endblock %}

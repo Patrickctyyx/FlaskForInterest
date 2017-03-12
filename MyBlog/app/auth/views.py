@@ -74,6 +74,7 @@ def before_request():
         if not current_user.confirmed \
                 and request.endpoint[:5] != 'auth.' \
                 and request.endpoint != 'static':
+            # 请求静态文件也不拦截
             return redirect(url_for('auth.unconfirmed'))
 
 
@@ -179,3 +180,4 @@ def change_mail(token, email):
     else:
         flash('The confirmation link is invalid or has expired.')
         return redirect(url_for('main.index'))
+

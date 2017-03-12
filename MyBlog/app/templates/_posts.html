@@ -14,7 +14,28 @@
                     {{ post.author.userinfo.name }}
                 </a>
             </div>
-            <div class="post-body">{{ post.body }}</div>
+            <div class="post-body">
+                {% if post.body_html %}
+                    <!--因为服务器生成的html是安全的，这里safe就是告诉Jinja2不要转义-->
+                    {{ post.body_html | safe }}
+                {% else %}
+                    {{ post.body }}
+                {% endif %}
+            </div>
+            <div class="post-footer">
+                <a href="{{ url_for('.post', id=post.id) }}">
+                   <span class="laber label-default">Permalink</span>
+                </a>
+                {% if current_user.uid == post.author_uid %}
+                <a href="{{ url_for('.edit', id=post.id) }}">
+                    <span class="laber label-primary">Edit</span>
+                </a>
+                {% elif current_user.is_administrator() %}
+                <a href="{{ url_for('.edit', id=post.id) }}">
+                    <span class="laber label-danger">Edit [Admin]</span>
+                </a>
+                {% endif %}
+            </div>
         </li>
         {% endfor %}
     </ul>

@@ -6,6 +6,7 @@ from .. import db
 from ..models import ContactMeInfo, UserInfo, Account, Role, Permission, Post
 from flask_login import login_required, current_user
 from ..decorators import admin_required
+from sqlalchemy.exc import IntegrityError
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -65,9 +66,14 @@ def complete_profile():
         userinfo.major = form.major.data
         userinfo.qq = form.qq.data
         userinfo.introduction = form.introduction.data
-        db.session.add(userinfo)
-        db.session.commit()
-        flash('信息初始化完成！')
+        try:
+            db.session.add(userinfo)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            flash(str(e.orig).split('.')[1].capitalize() + ' is already existed!')
+            return redirect(url_for('.user', username=userinfo.name))
+        flash('初始化完成')
         return redirect(url_for('.user', username=userinfo.name))
     form.phone.data = userinfo.phone
     form.student_id.data = userinfo.student_id
@@ -93,8 +99,13 @@ def edit_profile():
         userinfo.major = form.major.data
         userinfo.qq = form.qq.data
         userinfo.introduction = form.introduction.data
-        db.session.add(userinfo)
-        db.session.commit()
+        try:
+            db.session.add(userinfo)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            flash(str(e.orig).split('.')[1].capitalize() + ' is already existed!')
+            return redirect(url_for('.user', username=userinfo.name))
         flash('信息修改成功！')
         return redirect(url_for('.user', username=userinfo.name))
     form.phone.data = userinfo.phone
@@ -127,8 +138,13 @@ def edit_profile_admin(uid):
         userinfo.major = form.major.data
         userinfo.qq = form.qq.data
         userinfo.introduction = form.introduction.data
-        db.session.add(userinfo)
-        db.session.commit()
+        try:
+            db.session.add(userinfo)
+            db.session.commit()
+        except IntegrityError as e:
+            db.session.rollback()
+            flash(str(e.orig).split('.')[1].capitalize() + ' is already existed!')
+            return redirect(url_for('.user', username=userinfo.name))
         flash('信息修改成功！')
         return redirect(url_for('.user', username=userinfo.name))
     form.name.data = userinfo.name
@@ -144,3 +160,28 @@ def edit_profile_admin(uid):
     form.major.data = userinfo.major
     form.introduction.data = userinfo.introduction
     return render_template('edit_profile.html', form=form, user=user)
+
+
+@main.route('/post/<int:id>')
+def post(id):
+    post = Post.query.get_or_404(id)
+    return render_template('post.html', posts=[post])
+
+
+@main.route('/edit/<int:id>')
+@login_required
+def edit(id):
+    post = Post.query.get_or_404(id)
+    if current_user.uid != post.author_uid and \
+            not current_user.can(Permission.ADMINISTER):
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.body = form.body.data
+        db.session.add(post)
+        flash('更新动态成功！')
+        return redirect(url_for('post', id=post.id))
+    form.body.data = post.body
+    return render_template('edit_post.html', form=form)
+
+

@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_pagedown.fields import PageDownField
 from wtforms import StringField, SubmitField, TextAreaField, IntegerField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError
 from ..models import Role, UserInfo
@@ -67,5 +68,5 @@ class EditProfileAdminForm(FlaskForm):
 
 class PostForm(FlaskForm):
 
-    body = TextAreaField('Got some inspiration?', validators=[DataRequired()])
+    body = PageDownField('Got some inspiration?', validators=[DataRequired()])
     submit = SubmitField('Submit')
