@@ -46,11 +46,13 @@
                                     <a href="#" class="nav-link">About</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">Blog</a>
-                                </li>
-                                <li class="nav-item">
                                     <a href="#" class="nav-link">Contact</a>
                                 </li>
+                                {% if current_user.can(Permission.MODERATE_COMMENTS) %}
+                                <li class="nav-item">
+                                    <a href="{{ url_for('main.moderate') }}" class="nav-link">Moderate Comments</a>
+                                </li>
+                                {% endif %}
                                 {% if current_user.is_authenticated %}
                                 <li class="nav-item">
                                     <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>

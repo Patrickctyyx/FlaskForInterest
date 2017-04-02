@@ -72,6 +72,7 @@ class Account(db.Model, UserMixin):
     # 两边都要引用就用back_populates
     userinfo = db.relationship('UserInfo', back_populates='account', uselist=False)  # uselist=False表示一对一
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
     def __init__(self, **kwargs):
         super(Account, self).__init__(**kwargs)
@@ -228,6 +229,7 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     cred_at = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
     author_uid = db.Column(db.String(36), db.ForeignKey(Account.uid))
+    comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
     @staticmethod
     def generate_fake(count=100):
@@ -256,5 +258,27 @@ class Post(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
+
+class Comment(db.Model):
+
+    __tablename__ = 'Comment'
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
+    cred_at = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
+    disabled = db.Column(db.Boolean)
+    author_id = db.Column(db.String(36), db.ForeignKey(Account.uid))
+    post_id = db.Column(db.Integer, db.ForeignKey(Post.id))
+
+    @staticmethod
+    def on_change_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i',
+                        'strong']
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
 # 添加到sqlalchemy的监视中，只要Post的body字段设置新值，函数就会自动调用
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+db.event.listen(Comment.body, 'set', Comment.on_change_body)

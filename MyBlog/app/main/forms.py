@@ -70,3 +70,9 @@ class PostForm(FlaskForm):
 
     body = PageDownField('Got some inspiration?', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+class CommentForm(FlaskForm):
+
+    body = StringField('', validators=[DataRequired()])
+    submit = SubmitField('Submit')

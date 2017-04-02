@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Patrick's Space - Comment Moderate{% endblock %}
+
+{% block tip %}Moderate the Comments{% endblock %}
+
+{% block explain %}Moderate the comments here~{% endblock %}
+
+{% block page_content %}
+    {% set moderate = True %}
+    {% if pagination %}
+    <div class="pagination">
+        {{ macros.pagination_widget(pagination, '.moderate') }}
+    </div>
+    {% endif %}
+{% endblock %}
+

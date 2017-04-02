@@ -1,11 +1,11 @@
 from flask import render_template, redirect, url_for, flash, abort, request, current_app
 
 from . import main
-from .forms import ContactMeForm, CompleteProfileField, EditProfileField, EditProfileAdminForm, PostForm
+from .forms import ContactMeForm, CompleteProfileField, EditProfileField, EditProfileAdminForm, PostForm, CommentForm
 from .. import db
-from ..models import ContactMeInfo, UserInfo, Account, Role, Permission, Post
+from ..models import ContactMeInfo, UserInfo, Account, Role, Permission, Post, Comment
 from flask_login import login_required, current_user
-from ..decorators import admin_required
+from ..decorators import admin_required, permission_required
 from sqlalchemy.exc import IntegrityError
 
 
@@ -162,10 +162,29 @@ def edit_profile_admin(uid):
     return render_template('edit_profile.html', form=form, user=user)
 
 
-@main.route('/post/<int:id>')
+@main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Post.query.get_or_404(id)
-    return render_template('post.html', posts=[post])
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(
+            body=form.body.data,
+            post=post,
+            author=Account.query.get(post.author_uid)
+        )
+        db.session.add(comment)
+        db.session.commit()
+        flash('评论成功！')
+        return redirect(url_for('.post', id=post.id, page=-1))
+    page = request.args.get('page', 1, type=int)
+    if page == -1:
+        page = (post.comments.count() - 1) / current_app.config['FLASK_COMMENTS_PER_PAGE'] + 1
+    pagination = post.comments.order_by(Comment.cred_at.asc()).paginate(
+        page, per_page=current_app.config['FLASK_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    return render_template('post.html', posts=[post], form=form,
+                           comments=comments, pagination=pagination)
 
 
 @main.route('/edit/<int:id>')
@@ -185,3 +204,37 @@ def edit(id):
     return render_template('edit_post.html', form=form)
 
 
+@main.route('/moderate')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate():
+    page = request.args.get('page', 1, type=int)
+    pagination = Comment.query.order_by(Comment.cred_at.desc()).paginate(
+        page, per_page=current_app.config['FLASK_COMMENTS_PER_PAGE'],
+        error_out=False
+    )
+    comments = pagination.items
+    return render_template('moderate.html', comments=comments,
+                           pagination=pagination, page=page)
+
+
+@main.route('/moderate/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate_enable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = False
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate', page=request.args.get('page', 1, type=int)))
+
+
+@main.route('/moderate/enable/<int:id>')
+@login_required
+@permission_required(Permission.MODERATE_COMMENTS)
+def moderate_disable(id):
+    comment = Comment.query.get_or_404(id)
+    comment.disabled = True
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for('.moderate', page=request.args.get('page', 1, type=int)))
