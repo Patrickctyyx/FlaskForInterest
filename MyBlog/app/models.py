@@ -144,6 +144,19 @@ class Account(db.Model, UserMixin):
             except IntegrityError:
                 db.session.rollback()
 
+    def generate_auth_token(self, expiration):
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'uid': self.uid})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return Account.query.get(data['uid'])
+
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
