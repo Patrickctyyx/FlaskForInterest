@@ -8,7 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from . import login_manger
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app, request
+from flask import current_app, request, url_for
+from app.exception import ValidationError
 
 
 @login_manger.user_loader
@@ -200,6 +201,26 @@ class UserInfo(db.Model):
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash, size=size, default=default, rating=rating)
 
+    def to_json(self):
+        json_user = {
+            # 'url': url_for('api.get_post', id=self.uid, _external=True),
+            'name': self.name,
+            'phone': self.phone,
+            'email': self.email,
+            'student_id': self.student_id,
+            'grade': self.grade,
+            'department': self.department,
+            'school': self.school,
+            'major': self.major,
+            'qq': self.qq,
+            'introduction': self.introduction,
+            'cred_at': self.account.cred_at,
+            'last_seen': self.account.last_seen,
+            'posts': url_for('api.get_user_posts', uid=self.uid, _external=True),
+            'post_count': self.account.posts.count()
+        }
+        return json_user
+
 
 class Role(db.Model):
 
@@ -270,6 +291,25 @@ class Post(db.Model):
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
+
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_post', id=self.id, _external=True),
+            'body': self.body,
+            'body_html': self.body_html,
+            'cred_at': self.cred_at,
+            # 'author': url_for('api.get_user', uid=self.author_uid, _external=True),
+            # 'comments': url_for('api_get_post_comments', id=self.id, _external=True),
+            'comment_count': self.comments.count()
+        }
+        return json_post
+
+    @staticmethod
+    def fron_json(json_post):
+        body = json_post.get('body')
+        if body is None or body == '':
+            raise ValidationError('Post does not have a body')
+        return Post(body=body)
 
 
 class Comment(db.Model):
