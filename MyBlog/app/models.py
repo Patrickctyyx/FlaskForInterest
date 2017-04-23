@@ -136,9 +136,10 @@ class Account(db.Model, UserMixin):
                         confirmed=True)
             db.session.add(u)
             db.session.flush()
-            info = UserInfo(uid=u.uid,
-                            email=forgery_py.internet.email_address(),
-                            name=forgery_py.name.full_name())
+            info = UserInfo()
+            info.uid = u.uid
+            info.email = forgery_py.internet.email_address()
+            info.name = forgery_py.name.full_name()
             db.session.add(info)
             try:
                 db.session.commit()

@@ -1,5 +1,5 @@
 from . import api
-from .authentication import forbidden
+from .authentication import forbidden, auth
 from .. import db
 from ..models import Post, Permission
 from .decorators import permission_required

@@ -41,9 +41,10 @@ def register():
             user.role = role
         db.session.add(user)
         db.session.flush()
-        userinfo = UserInfo(uid=user.uid,
-                            email=form.email.data,
-                            name=form.name.data)
+        userinfo = UserInfo()
+        userinfo.uid = user.uid
+        userinfo.email = form.email.data
+        userinfo.name = form.name.data
         db.session.add(userinfo)
         db.session.commit()
         login_user(user, False)
