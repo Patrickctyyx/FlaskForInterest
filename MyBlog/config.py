@@ -60,6 +60,18 @@ class ProductionConfig(Config):
             app.logger.addHandler(mail_handler)
 
 
+class UnixConfig(Config):
+    @classmethod
+    def init_app(cls, app):
+        ProductionConfig.init_app(app)
+
+        import logging
+        from logging.handlers import SysLogHandler
+        syslog_handler = SysLogHandler()
+        syslog_handler.setLevel(logging.WARNING)
+        app.logger.addHandler(syslog_handler)  # 日志会被写到 /vae/log/messages
+
+
 config = {
     'development': DevementConfig,
     'testing': TestingConfig,
