@@ -7,6 +7,7 @@ from ..models import ContactMeInfo, UserInfo, Account, Role, Permission, Post, C
 from flask_login import login_required, current_user
 from ..decorators import admin_required, permission_required
 from sqlalchemy.exc import IntegrityError
+from flask_sqlalchemy import get_debug_queries
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -249,3 +250,13 @@ def server_shutdown():
         abort(500)
     shutdown()
     return 'Shutting down...'
+
+
+@main.after_app_request
+def after_request(response):
+    for query in get_debug_queries():
+        if query.duration >= current_app.config['FLASK_SLOW_DB_QUERY_TIME']:
+            current_app.logger.warning(
+                'Slow query: %s\nParameters: %s\nDuration: %fs\nContext: %s\n' % (query.statement, query.parameters,
+                                                                                  query.duration, query.context))
+    return response
