@@ -92,3 +92,9 @@ ENV/
 .ropeproject
 
 .idea/
+/MyBlog/flcty/
+/MyBlog/cty-dev.sqlite
+/MyBlog/cty-test.sqlite
+/MyBlog/tmp/
+/MyBlog/migrations/
+/GuessNumber/cty/
