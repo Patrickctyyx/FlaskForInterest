@@ -29,6 +29,7 @@ def create_app(config_name):
     login_manger.init_app(app)
     pagedown.init_app(app)
 
+    # 注册蓝图，方便管理应用
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 

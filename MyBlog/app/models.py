@@ -19,6 +19,8 @@ def load_user(uid):
 
 class Verify:
 
+    """Verify when password is forgotten."""
+
     def __init__(self, email):
         self.email = email
 
@@ -42,7 +44,7 @@ class Permission:
     COMMENT = 0x02
     WRITE_ARTICLES = 0x04
     MODERATE_COMMENTS = 0x08
-    ADMINISTER = 0x80
+    ADMINISTER = 0x0f
 
 
 class ContactMeInfo(db.Model):
@@ -61,17 +63,25 @@ class ContactMeInfo(db.Model):
 
 class Account(db.Model, UserMixin):
 
+    """
+    User table
+    重要的信息比如邮箱（用于登录验证），密码应该存放在这里。
+    和登录相关的内容比如用户名，上次登录，登录 ip 之类都应该存放在这个表。
+    账号是否验证，权限也应该放在这里。
+    """
+
     __tablename__ = 'Account'
 
     uid = db.Column(db.String(36), primary_key=True,
-                    default=lambda: str(uuid.uuid4()))  # 用uuid应该是为了防止用户名冲突
+                    default=lambda: str(uuid.uuid4()))  # 用 uuid 应该是为了防止用户名冲突
     passwd = db.Column(db.String(128))
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
-    last_seen = db.Column(db.DateTime, default=datetime.datetime.now)  # default可以接受函数为参数
+    last_seen = db.Column(db.DateTime, default=datetime.datetime.now)  # default 可以接受函数为参数
     confirmed = db.Column(db.Boolean, default=False)
     role_id = db.Column(db.Integer, db.ForeignKey('Role.id'))
-    # 两边都要引用就用back_populates
-    userinfo = db.relationship('UserInfo', back_populates='account', uselist=False)  # uselist=False表示一对一
+
+    # 两边都要引用就用 back_populates
+    userinfo = db.relationship('UserInfo', back_populates='account', uselist=False)  # uselist=False 表示一对一
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
 
@@ -172,6 +182,12 @@ login_manger.anonymous_user = AnonymousUser
 
 class UserInfo(db.Model):
 
+    """
+    User information table
+    存放不那么重要的信息，比如头像介绍等。
+    通过 uid 来与用户表关联
+    """
+
     __tablename__ = 'UserInfo'
 
     uid = db.Column(db.String(36), db.ForeignKey(Account.uid), primary_key=True)
@@ -224,6 +240,11 @@ class UserInfo(db.Model):
 
 
 class Role(db.Model):
+
+    """
+    User kind
+    分为用户，小管理员，管理员
+    """
 
     __tablename__ = 'Role'
 

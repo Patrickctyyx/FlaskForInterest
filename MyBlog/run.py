@@ -23,7 +23,7 @@ manager.add_command('shell', Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
 
-@manager.command
+@manager.command  # ./run.py test --coverage
 def test(coverage=False):
     if coverage and not os.environ.get('FLASK_COVERAGE'):
         import sys
@@ -46,8 +46,8 @@ def test(coverage=False):
         COV.erase()
 
 
-@manager.command
-def profile(length=25, profile_dir=None):
+@manager.command  # 在请求分析器的监视下运行程序
+def profile(length=25, profile_dir=None):  # 终端会显示每条请求的分析数据,其中包含运行最慢的 25 个函数
     from werkzeug.contrib.profiler import ProfilerMiddleware
     app.wsgi_app = ProfilerMiddleware(app.wsgi_app, restrictions=[length], profile_dir=profile_dir)
     app.run()

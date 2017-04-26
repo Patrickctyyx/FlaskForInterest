@@ -4,19 +4,22 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = 'Free like a pirate.'
+
     SQLALCHEMY_COMMIT_ON_TEARDOWM = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    SQLALCHEMY_RECORD_QUERIES = True
+    FLASK_SLOW_DB_QUERY_TIME = 0.5
+
     FLASK_MAIL_SUBJECT_PREFIX = '[Patrick]'
     FLASK_MAIL_SENDER = 'Patrick <{}>'.format(os.environ.get('MAIL_USERNAME'))
     FLASK_ADMIN = os.environ.get('MAIL_USERNAME')
-    FLASK_POSTS_PER_PAGE = 10
-    FLASK_COMMENTS_PER_PAGE = 10
-    SQLALCHEMY_RECORD_QUERIES = True
-    FLASK_SLOW_DB_QUERY_TIME = 0.5
     MAIL_SERVER = 'smtp.sina.com'
     MAIL_PORT = 25  # SSL，TLS都不要开...就是这个端口了
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+
+    FLASK_POSTS_PER_PAGE = 10
+    FLASK_COMMENTS_PER_PAGE = 10
 
     @staticmethod
     def init_app(app):
@@ -51,7 +54,7 @@ class ProductionConfig(Config):
             mail_handler = SMTPHandler(
                 mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
                 fromaddr=cls.FLASK_MAIL_SENDER,
-                toaddrs=[cls.FLASK_ADMIN],
+                toaddrs=['873948000@qq.com'],
                 subject=cls.FLASK_MAIL_SUBJECT_PREFIX + 'Application Error',
                 credentials=credentials,
                 secure=None
@@ -76,5 +79,6 @@ config = {
     'development': DevementConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
+    'unix': UnixConfig,
     'default': DevementConfig
 }
