@@ -74,6 +74,9 @@ class Account(db.Model, UserMixin):
 
     uid = db.Column(db.String(36), primary_key=True,
                     default=lambda: str(uuid.uuid4()))  # 用 uuid 应该是为了防止用户名冲突
+    email = db.Column(db.String(64), unique=True)
+    username = db.Column(db.String(32), unique=True)
+    phone = db.Column(db.String(16), unique=True)
     passwd = db.Column(db.String(128))
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
     last_seen = db.Column(db.DateTime, default=datetime.datetime.now)  # default 可以接受函数为参数
@@ -192,21 +195,14 @@ class UserInfo(db.Model):
 
     uid = db.Column(db.String(36), db.ForeignKey(Account.uid), primary_key=True)
     avatar_hash = db.Column(db.String(32))
-    name = db.Column(db.String(64), unique=True)
-    phone = db.Column(db.String(16), unique=True)
-    email = db.Column(db.String(64), unique=True)
-    student_id = db.Column(db.Integer, unique=True)
-    grade = db.Column(db.String(64))
-    department = db.Column(db.String(128))
-    school = db.Column(db.String(128))
-    major = db.Column(db.String(128))
-    qq = db.Column(db.String(64), unique=True)
+    region = db.Column(db.String(16))
+    gender = db.Column(db.String(8))
     introduction = db.Column(db.Text)
 
     account = db.relationship('Account', back_populates='userinfo', uselist=False)
 
     def __init__(self, **kwargs):
-        if self.email is not None and self.avatar_hash is None:
+        if self.account.email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
 
     def gravatar(self, size=100, default='identicon', rating='g'):
@@ -220,21 +216,11 @@ class UserInfo(db.Model):
 
     def to_json(self):
         json_user = {
-            # 'url': url_for('api.get_post', id=self.uid, _external=True),
-            'name': self.name,
-            'phone': self.phone,
-            'email': self.email,
-            'student_id': self.student_id,
-            'grade': self.grade,
-            'department': self.department,
-            'school': self.school,
-            'major': self.major,
-            'qq': self.qq,
+            'region': self.region,
+            'gender': self.gender,
             'introduction': self.introduction,
             'cred_at': self.account.cred_at,
-            'last_seen': self.account.last_seen,
-            'posts': url_for('api.get_user_posts', uid=self.uid, _external=True),
-            'post_count': self.account.posts.count()
+            'last_seen': self.account.last_seen
         }
         return json_user
 
