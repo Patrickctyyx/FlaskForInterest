@@ -16,13 +16,14 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
 
     email = StringField('Email:', validators=[DataRequired(), Email(), Length(1, 64)])
-    name = StringField('Name:', validators=[DataRequired(), Length(1, 64)])
+    username = StringField('User Name:', validators=[DataRequired(), Length(1, 64)])
+    phone = StringField('Phone Number:', validators=[DataRequired(), Length(11, 11)])
     password = PasswordField('Password:', validators=[DataRequired(), EqualTo('password2', message='两次密码应该相同。')])
     password2 = PasswordField('Confirm Password:', validators=[DataRequired()])
     submit = SubmitField('Register')
 
     def validate_email(self, field):
-        if UserInfo.query.filter_by(email=field.data).first():
+        if Account.query.filter_by(email=field.data).first():
             raise ValidationError('已经存在的邮箱。')
 
 

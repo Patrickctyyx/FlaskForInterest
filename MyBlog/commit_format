@@ -1,0 +1,17 @@
+# Commit format:
+
+Branch:
+    dev
+    # master
+
+Main feature:
+    - home page
+    - user page
+
+Detailed feature:
+
+    - user page (Finished)
+    - user page HTML (Todo)
+    - complete profile (F)
+    - edit profile (F)
+    - admin edit profile (F)

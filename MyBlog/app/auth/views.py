@@ -35,7 +35,10 @@ def logout():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = Account(password=form.password.data)
+        user = Account(password=form.password.data,
+                       email=form.email.data,
+                       username=form.username.data,
+                       phone=form.phone.data)
         if form.email.data == current_app.config['FLASK_ADMIN']:
             role = Role.query.filter_by(permissions=0xff).first()
             user.role = role
@@ -43,15 +46,13 @@ def register():
         db.session.flush()
         userinfo = UserInfo()
         userinfo.uid = user.uid
-        userinfo.email = form.email.data
-        userinfo.name = form.name.data
         db.session.add(userinfo)
         db.session.commit()
         login_user(user, False)
         token = user.generate_confirmation_token()
-        send_email(userinfo.email, 'Confirm Your Account',
-                   'auth/email/confirm', user=user, userinfo=userinfo, token=token)
-        flash('A confirmation email has been sent to your email.')
+        send_email(user.email, '确认你的邮件',
+                   'auth/email/confirm', user=user, token=token)
+        flash('一封确认邮箱的邮件已经发送到了你的邮箱中，请注意查收！')
         return redirect(url_for('main.index'))
     return render_template('auth/register.html', form=form)
 

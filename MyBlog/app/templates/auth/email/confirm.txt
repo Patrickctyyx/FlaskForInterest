@@ -1,4 +1,4 @@
-Dear {{ userinfo.name }},
+Dear {{ user.name }},
 
 Welcome to Patrick's Space!
 

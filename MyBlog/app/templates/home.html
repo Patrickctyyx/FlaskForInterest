@@ -2,24 +2,24 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
-{% block page_content %}
-    <div>
-        {% if current_user.can(Permission.WRITE_ARTICLES) %}
-        {{ wtf.quick_form(form2) }}
-        {% endif %}
-    </div>
-    {% include '_posts.html' %}
-    <div class="pagination">
-        {{ macros.pagination_widget(pagination, '.index') }}
-    </div>
-{% endblock %}
+{#{% block page_content %}#}
+{#    <div>#}
+{#        {% if current_user.can(Permission.WRITE_ARTICLES) %}#}
+{#        {{ wtf.quick_form(form2) }}#}
+{#        {% endif %}#}
+{#    </div>#}
+{#    {% include '_posts.html' %}#}
+{#    <div class="pagination">#}
+{#        {{ macros.pagination_widget(pagination, '.index') }}#}
+{#    </div>#}
+{#{% endblock %}#}
 
 {% block footer %}
     <h3>Contact Me:</h3>
     {{ wtf.quick_form(form) }}
 {% endblock %}
 
-{% block scripts %}
-    {{ super() }}
-    {{ pagedown.include_pagedown() }}
-{% endblock %}
+{#{% block scripts %}#}
+{#    {{ super() }}#}
+{#    {{ pagedown.include_pagedown() }}#}
+{#{% endblock %}#}

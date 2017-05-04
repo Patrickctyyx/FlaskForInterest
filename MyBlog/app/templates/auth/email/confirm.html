@@ -1,4 +1,4 @@
-<p>Dear {{ userinfo.username }},</p>
+<p>Dear {{ user.username }},</p>
 <p>Welcome to <b>Patrick's Space</b>!</p>
 <p>To confirm your account please <a href="{{ url_for('auth.confirm', token=token, _external=True) }}">click here</a>.</p>
 <p>Alternatively, you can paste the following link in your browser's address bar:</p>

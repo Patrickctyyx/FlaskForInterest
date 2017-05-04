@@ -2,14 +2,20 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% import "_macros.html" as macros %}
 
-{% block title %}{{ user.name }}'s Profile{% endblock %}
+{% block title %}{{ user.username }}'s Profile{% endblock %}
 
-{% block tip %}{{ user.name }}{% endblock %}
+{% block tip %}{{ user.username }}{% endblock %}
 
 {% block explain %}
-    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}"><br />
-    {% if user.introduction %}
-    {{ user.introduction }}
+    <img class="img-rounded profile-thumbnail" src="{{ info.gravatar(size=256) }}"><br />
+    {% if info.region %}
+    {{ info.region }}
+    {% endif %}
+    {% if info.gender %}
+    {{ info.gender }}
+    {% endif %}
+    {% if info.introduction %}
+    {{ info.introduction }}
     {% else %}
     这个人很懒哦，还没有个人介绍。
     {% endif %}
@@ -33,10 +39,10 @@
 {% endblock %}
 
 {% block page_content %}
-    <h3>Posts by: {{ user.name }}</h3>
-    {% include '_posts.html' %}
-    <div class="pagination">
-        {{ macros.pagination_widget(pagination, '.index') }}
-    </div>
+{#    <h3>Posts by: {{ user.username }}</h3>#}
+{#    {% include '_posts.html' %}#}
+{#    <div class="pagination">#}
+{#        {{ macros.pagination_widget(pagination, '.index') }}#}
+{#    </div>#}
     <p>Last Seen: {{ user.account.last_seen }}</p>
 {% endblock %}

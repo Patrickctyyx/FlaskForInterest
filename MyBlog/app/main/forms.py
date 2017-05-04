@@ -2,58 +2,46 @@ from flask_wtf import FlaskForm
 from flask_pagedown.fields import PageDownField
 from wtforms import StringField, SubmitField, TextAreaField, IntegerField, BooleanField, SelectField
 from wtforms.validators import DataRequired, Length, Email, NumberRange, ValidationError
-from ..models import Role, UserInfo
+from ..models import Role, Account
 
 
 class ContactMeForm(FlaskForm):
 
-    name = StringField('Name:', validators=[DataRequired()])
-    phone = StringField('Phone Number:', validators=[DataRequired(), Length(11, 11)])
-    email = StringField('Email:', validators=[DataRequired(), Email()])
-    comment = TextAreaField('Comment:')
-    submit = SubmitField('Submit')
+    name = StringField('姓名：', validators=[DataRequired()])
+    phone = StringField('电话号码：', validators=[DataRequired(), Length(11, 11)])
+    email = StringField('邮箱：', validators=[DataRequired(), Email()])
+    comment = TextAreaField('评论：')
+    submit = SubmitField('提交')
 
 
 class CompleteProfileField(FlaskForm):
 
-    phone = StringField('Phone:', validators=[DataRequired(), Length(10, 16)])
-    student_id = IntegerField('Student ID:', validators=[DataRequired(), NumberRange(1000000000, 3000000000)])
-    grade = StringField('Grade:', validators=[DataRequired()])
-    department = StringField('Department:', validators=[DataRequired()])
-    school = StringField('School:', validators=[DataRequired()])
-    major = StringField('Major', validators=[DataRequired()])
-    qq = StringField('QQ:', validators=[DataRequired()])
-    introduction = TextAreaField('Introduction:')
-    submit = SubmitField('Submit')
+    region = StringField('所在省：', validators=[DataRequired(), Length(2, 15)])
+    gender = SelectField('性别：', validators=[DataRequired()], choices=[('M', '男'), ('F', '女')])
+    introduction = TextAreaField('自我介绍：')
+    submit = SubmitField('提交')
 
 
 class EditProfileField(FlaskForm):
 
-    phone = StringField('Phone:', validators=[DataRequired(), Length(0, 16)])
-    grade = StringField('Grade:', validators=[DataRequired()])
-    department = StringField('Department:', validators=[DataRequired()])
-    school = StringField('School:', validators=[DataRequired()])
-    major = StringField('Major', validators=[DataRequired()])
-    qq = StringField('QQ:', validators=[DataRequired()])
+    phone = StringField('电话号码：', validators=[DataRequired(), Length(0, 16)])
+    region = StringField('所在省：', validators=[DataRequired(), Length(2, 15)])
+    gender = SelectField('性别：', validators=[DataRequired()], choices=[('M', '男'), ('F', '女')])
     introduction = TextAreaField('Introduction:')
     submit = SubmitField('Submit')
 
 
 class EditProfileAdminForm(FlaskForm):
 
-    name = StringField('Name:', validators=[DataRequired()])
-    email = StringField('Email:', validators=[DataRequired(), Email()])
-    confirmed = BooleanField('Confirmed:')
-    role = SelectField('Role', coerce=int)
-    phone = StringField('Phone:', validators=[DataRequired(), Length(10, 16)])
-    student_id = IntegerField('Student ID:', validators=[DataRequired(), NumberRange(1000000000, 3000000000)])
-    grade = StringField('Grade:', validators=[DataRequired()])
-    department = StringField('Department:', validators=[DataRequired()])
-    school = StringField('School:', validators=[DataRequired()])
-    major = StringField('Major', validators=[DataRequired()])
-    qq = StringField('QQ:', validators=[DataRequired()])
-    introduction = TextAreaField('Introduction:')
-    submit = SubmitField('Submit')
+    username = StringField('用户名：', validators=[DataRequired()])
+    email = StringField('邮箱：', validators=[DataRequired(), Email()])
+    confirmed = BooleanField('确认信息:')
+    role = SelectField('用户角色：', coerce=int)
+    phone = StringField('电话号码:', validators=[DataRequired(), Length(10, 16)])
+    region = StringField('所在省：', validators=[DataRequired(), Length(2, 15)])
+    gender = SelectField('性别：', validators=[DataRequired()], choices=[('M', '男'), ('F', '女')])
+    introduction = TextAreaField('自我介绍：')
+    submit = SubmitField('提交')
 
     def __init__(self, user, *args, **kwargs):
         super(EditProfileAdminForm, self).__init__(*args, **kwargs)
@@ -61,9 +49,9 @@ class EditProfileAdminForm(FlaskForm):
         self.user = user
 
     def validate_email(self, field):
-        if field.data != self.user.userinfo.email and \
-                UserInfo.query.filter_by(email=field.data).first():
-            raise ValidationError('Email已经存在！')
+        if field.data != self.user.email and \
+                Account.query.filter_by(email=field.data).first():
+            raise ValidationError('邮件已经存在！')
 
 
 class PostForm(FlaskForm):
