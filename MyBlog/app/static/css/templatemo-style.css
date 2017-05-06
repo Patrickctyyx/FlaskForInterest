@@ -174,8 +174,8 @@ h4 {
 
 .tm-footer {
 	color: #c6c6c6;
-	background-color: #191919;
-	background-image: url('../img/classic-pattern-bg.png');
+	background-color: lightgoldenrodyellow;
+	/* background-image: url('../img/classic-pattern-bg.png'); */
 	font-size: 1rem;
 	padding-top: 40px;
 	padding-bottom: 20px;
