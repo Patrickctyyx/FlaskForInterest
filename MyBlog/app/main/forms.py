@@ -8,7 +8,6 @@ from ..models import Role, Account
 class ContactMeForm(FlaskForm):
 
     name = StringField('姓名：', validators=[DataRequired()])
-    phone = StringField('电话号码：', validators=[DataRequired(), Length(11, 11)])
     email = StringField('邮箱：', validators=[DataRequired(), Email()])
     comment = TextAreaField('评论：')
     submit = SubmitField('提交')

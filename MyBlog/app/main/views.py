@@ -23,7 +23,6 @@ def index():
         info = ContactMeInfo.query.filter_by(phone=form.phone.data).first()
         if info is None:
             info = ContactMeInfo(name=form.name.data,
-                                 phone=form.phone.data,
                                  email=form.email.data,
                                  comment=form.comment.data if form.comment.data else None)
             db.session.add(info)
@@ -219,6 +218,12 @@ def edit_profile_admin(uid):
 #     db.session.commit()
 #     return redirect(url_for('.moderate', page=request.args.get('page', 1, type=int)))
 #
+
+
+@main.route('/test')
+def test_html():
+    return render_template('_base.html')
+
 
 @main.route('/shutdown')
 def server_shutdown():
