@@ -218,10 +218,8 @@ def edit_profile_admin(uid):
 #     db.session.commit()
 #     return redirect(url_for('.moderate', page=request.args.get('page', 1, type=int)))
 #
-
-
 @main.route('/test')
-def test_html():
+def test():
     return render_template('_base.html')
 
 
