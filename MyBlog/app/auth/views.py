@@ -113,43 +113,44 @@ def change_password():
             return redirect(url_for('main.index'))
         flash('请输入正确的密码！')
     return render_template('auth/password.html', form=form)
-#
-#
-# @auth.route('/forgetpasswd', methods=['GET', 'POST'])
-# def forget_password():  # 发送验证邮件
-#     form = VerifyEmailForm()
-#     if form.validate_on_submit():
-#         verify = Verify(form.email.data)
-#         token = verify.generate_confirmation_token()
-#         send_email(form.email.data, 'Verify Your Email',
-#                    'auth/email/verify', token=token, email=form.email.data)
-#         flash('一封确认邮件已经发送到了你的邮箱。如果你没有收到有钱，氢回到上一页重新发送。')
-#         return redirect(url_for('main.index'))
-#     return render_template('auth/submit_email.html', form=form)
-#
-#
-# @auth.route('/resetpasswd/<token>/<email>', methods=['GET', 'POST'])
-# def reset_password(token, email):
-#     verify = Verify(email)
-#     userinfo = UserInfo.query.filter_by(email=email).first()
-#     if not userinfo:
-#         flash('The email is invalid!')
-#         return redirect(url_for('auth.forget_password'))
-#     if verify.confirm(token):
-#         flash('You have verified your account. And you can reset your password now!')
-#         form = ResetPassForm()
-#         if form.validate_on_submit():
-#             user = Account.query.get(userinfo.uid)
-#             user.password = form.password.data  # 修改密码要这样，其中user.password并不是数据库对应的密码字段
-#             login_user(user, False)
-#             db.session.add(user)
-#             db.session.commit()
-#             flash('成功重置密码！')
-#             return redirect(url_for('main.index'))
-#         return render_template('auth/reset_pass.html', form=form)
-#     else:
-#         flash('The confirmation link is invalid or has expired.')
-#         return redirect(url_for('main.index'))
+
+
+@auth.route('/forgetpasswd', methods=['GET', 'POST'])
+def forget_password():  # 发送验证邮件
+    form = VerifyEmailForm()
+    if form.validate_on_submit():
+        verify = Verify(form.email.data)
+        token = verify.generate_confirmation_token()
+        send_email(form.email.data, 'Verify Your Email',
+                   'auth/email/verify', token=token, email=form.email.data)
+        flash('一封确认邮件已经发送到了你的邮箱。如果你没有收到邮件，请回到上一页重新发送。')
+        return redirect(url_for('main.index'))
+    return render_template('auth/submit_email.html', form=form)
+
+
+@auth.route('/resetpasswd/<token>/<email>', methods=['GET', 'POST'])
+def reset_password(token, email):
+    verify = Verify(email)
+    account = Account.query.filter_by(email=email).first()
+    # userinfo = UserInfo.query.filter_by(email=email).first()
+    if not account:
+        flash('邮箱无效！')
+        return redirect(url_for('auth.forget_password'))
+    if verify.confirm(token):
+        flash('你已经验证了你的邮箱，现在可以更改密码了！')
+        form = ResetPassForm()
+        if form.validate_on_submit():
+            # user = Account.query.get(userinfo.uid)
+            account.password = form.password.data  # 修改密码要这样，其中user.password并不是数据库对应的密码字段
+            login_user(account, False)
+            db.session.add(account)
+            db.session.commit()
+            flash('成功重置密码！')
+            return redirect(url_for('main.index'))
+        return render_template('auth/reset_pass.html', form=form)
+    else:
+        flash('验证链接失效或者过期了！')
+        return redirect(url_for('main.index'))
 #
 #
 # @auth.route('/changemail', methods=['GET', 'POST'])

@@ -37,8 +37,8 @@ class ChangePassForm(FlaskForm):
 
 class VerifyEmailForm(FlaskForm):
 
-    email = StringField('Email:', validators=[DataRequired(), Email(), Length(1, 64)])
-    submit = SubmitField('Submit')
+    email = StringField('邮箱:', validators=[DataRequired(), Email(), Length(1, 64)])
+    submit = SubmitField('提交')
 
 
 class ResetPassForm(FlaskForm):
