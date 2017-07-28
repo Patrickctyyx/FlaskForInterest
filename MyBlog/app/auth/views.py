@@ -63,6 +63,11 @@ def register():
 @login_required
 def confirm(token):
     if current_user.confirmed:
+        verify = Verify(current_user.email)
+        if verify.confirm(token):
+            flash('成功验证！')
+        else:
+            flash('确认链接已经失效！')
         return redirect(url_for('main.index'))
     if current_user.confirm(token):
         flash('你的账户已经成功确认！')
@@ -121,7 +126,7 @@ def forget_password():  # 发送验证邮件
     if form.validate_on_submit():
         verify = Verify(form.email.data)
         token = verify.generate_confirmation_token()
-        send_email(form.email.data, 'Verify Your Email',
+        send_email(form.email.data, '验证你的邮箱',
                    'auth/email/verify', token=token, email=form.email.data)
         flash('一封确认邮件已经发送到了你的邮箱。如果你没有收到邮件，请回到上一页重新发送。')
         return redirect(url_for('main.index'))
@@ -151,36 +156,39 @@ def reset_password(token, email):
     else:
         flash('验证链接失效或者过期了！')
         return redirect(url_for('main.index'))
-#
-#
-# @auth.route('/changemail', methods=['GET', 'POST'])
-# @login_required
-# def check_mail():  # 发送验证邮件
-#     form = VerifyEmailForm()
-#     if form.validate_on_submit():
-#         token = current_user.generate_confirmation_token()
-#         email = form.email.data
-#         send_email(email, 'Verify Your Email',
-#                    'auth/email/verify_mail', token=token, email=email)
-#         flash('A verification email has been sent to your email. If you didn\'t receive the email,'
-#               ' go back to the previous page and check your email.')
-#         return redirect(url_for('main.index'))
-#     return render_template('auth/reset_mail.html', form=form)
-#
-#
-# @auth.route('/changemail/<token>/<email>', methods=['GET', 'POST'])
-# @login_required
-# def change_mail(token, email):
-#     if current_user.confirm(token):
-#         flash('You have verified your account. And you can change your email now!')
-#         userinfo = UserInfo.query.filter_by(uid=current_user.uid).first()
-#         userinfo.email = email
-#         userinfo.avatar_hash = hashlib.md5(email.encode('utf-8')).hexdigest()
-#         db.session.add(userinfo)
-#         db.session.commit()
-#         flash('成功修改邮箱！')
-#         return redirect(url_for('main.index'))
-#     else:
-#         flash('The confirmation link is invalid or has expired.')
-#         return redirect(url_for('main.index'))
+
+
+@auth.route('/changemail', methods=['GET', 'POST'])
+@login_required
+def check_mail():  # 发送验证邮件
+    form = VerifyEmailForm()
+    if form.validate_on_submit():
+        token = current_user.generate_confirmation_token()
+        email = form.email.data
+        send_email(email, '验证你的邮箱',
+                   'auth/email/verify_mail', token=token, email=email)
+        flash('一封确认邮件已经发送到了你的邮箱。如果你没有收到邮件，请回到上一页重新发送。')
+        return redirect(url_for('main.index'))
+    return render_template('auth/reset_mail.html', form=form)
+
+
+@auth.route('/changemail/<token>/<email>', methods=['GET', 'POST'])
+@login_required
+def change_mail(token, email):
+    if current_user.confirm(token):
+        flash('你已经验证了你的邮箱，现在可以更改邮箱了！')
+        userinfo = UserInfo.query.filter_by(uid=current_user.uid).first()
+        userinfo.email = email
+        userinfo.avatar_hash = hashlib.md5(email.encode('utf-8')).hexdigest()
+        db.session.add(userinfo)
+        db.session.commit()
+        flash('成功修改邮箱！')
+        token = current_user.generate_confirmation_token()
+        send_email(current_user.email, '确认你的邮件',
+                   'auth/email/confirm', user=current_user, token=token)
+        flash('一封确认邮箱的邮件已经发送到了你的邮箱中，请注意查收！')
+        return redirect(url_for('main.index'))
+    else:
+        flash('验证链接失效或者过期了！')
+        return redirect(url_for('main.index'))
 
