@@ -1,6 +1,7 @@
 from . import auth
 from .. import db
 import hashlib
+from sqlalchemy.exc import IntegrityError
 from ..models import Account, UserInfo, Verify, Role
 from ..emails import send_email
 from .forms import LoginForm, RegisterForm, ChangePassForm, VerifyEmailForm, ResetPassForm
@@ -39,8 +40,13 @@ def register():
         if form.email.data == current_app.config['FLASK_ADMIN']:
             role = Role.query.filter_by(permissions=0xff).first()
             user.role = role
-        db.session.add(user)
-        db.session.flush()
+        try:
+            db.session.add(user)
+            db.session.flush()
+        except IntegrityError as e:
+            db.session.rollback()
+            flash(str(e.orig).split('.')[1].capitalize() + ' is already existed!')
+            return render_template('auth/register.html', form=form)
         userinfo = UserInfo(uid=user.uid)
         db.session.add(userinfo)
         db.session.commit()
