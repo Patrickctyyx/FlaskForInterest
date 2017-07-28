@@ -97,5 +97,6 @@ ENV/
 /MyBlog/cty-test.sqlite
 /MyBlog/tmp/
 /MyBlog/migrations/
+/MyBlog/app/materialize/
 /GuessNumber/cty/
 *.sqlite
