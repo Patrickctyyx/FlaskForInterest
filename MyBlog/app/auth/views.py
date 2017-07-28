@@ -32,17 +32,16 @@ def logout():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = Account(password=form.password.data,
-                       email=form.email.data,
-                       username=form.username.data,
-                       phone=form.phone.data)
+        user = Account(password=form.password.data)
+        user.email = form.email.data
+        user.username = form.username.data
+        user.phone = form.phone.data
         if form.email.data == current_app.config['FLASK_ADMIN']:
             role = Role.query.filter_by(permissions=0xff).first()
             user.role = role
         db.session.add(user)
         db.session.flush()
-        userinfo = UserInfo()
-        userinfo.uid = user.uid
+        userinfo = UserInfo(uid=user.uid)
         db.session.add(userinfo)
         db.session.commit()
         login_user(user, False)
@@ -95,19 +94,19 @@ def resend_confirmation():
     return redirect(url_for('main.index'))
 
 
-# @auth.route('/changepasswd', methods=['GET', 'POST'])
-# @login_required
-# def change_password():
-#     form = ChangePassForm()
-#     if form.validate_on_submit():
-#         if current_user.verify_password(form.former_pass.data):
-#             current_user.password = form.password.data
-#             db.session.add(current_user)
-#             db.session.commit()
-#             flash('成功更改密码！')
-#             return redirect(url_for('main.index'))
-#         flash('请输入正确的密码！')
-#     return render_template('auth/password.html', form=form)
+@auth.route('/changepasswd', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePassForm()
+    if form.validate_on_submit():
+        if current_user.verify_password(form.former_pass.data):
+            current_user.password = form.password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash('成功更改密码！')
+            return redirect(url_for('main.index'))
+        flash('请输入正确的密码！')
+    return render_template('auth/password.html', form=form)
 #
 #
 # @auth.route('/forgetpasswd', methods=['GET', 'POST'])

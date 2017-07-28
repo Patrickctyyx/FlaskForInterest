@@ -29,10 +29,10 @@ class RegisterForm(FlaskForm):
 
 class ChangePassForm(FlaskForm):
 
-    former_pass = PasswordField('Your Former Password:', validators=[DataRequired()])
-    password = PasswordField('Password:', validators=[DataRequired(), EqualTo('password2', message='两次密码应该相同。')])
-    password2 = PasswordField('Confirm Password:', validators=[DataRequired()])
-    submit = SubmitField('Confirm')
+    former_pass = PasswordField('原密码:', validators=[DataRequired()])
+    password = PasswordField('新密码:', validators=[DataRequired(), EqualTo('password2', message='两次密码应该相同。')])
+    password2 = PasswordField('重复密码:', validators=[DataRequired()])
+    submit = SubmitField('确认更改')
 
 
 class VerifyEmailForm(FlaskForm):

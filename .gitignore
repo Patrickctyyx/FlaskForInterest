@@ -98,3 +98,4 @@ ENV/
 /MyBlog/tmp/
 /MyBlog/migrations/
 /GuessNumber/cty/
+*.sqlite

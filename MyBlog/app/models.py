@@ -202,8 +202,10 @@ class UserInfo(db.Model):
     account = db.relationship('Account', back_populates='userinfo', uselist=False)
 
     def __init__(self, **kwargs):
-        if self.account.email is not None and self.avatar_hash is None:
-            self.avatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
+        self.uid = kwargs['uid']
+        email = Account.query.filter_by(uid=kwargs['uid']).first().email
+        if email is not None and self.avatar_hash is None:
+            self.avatar_hash = hashlib.md5(email.encode('utf-8')).hexdigest()
 
     def gravatar(self, size=100, default='identicon', rating='g'):
         if request.is_secure:
