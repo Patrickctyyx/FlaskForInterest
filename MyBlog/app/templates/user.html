@@ -9,11 +9,12 @@
 {% block explain %}
     <img class="img-rounded profile-thumbnail" src="{{ info.gravatar(size=256) }}"><br />
     {% if info.region %}
-    {{ info.region }}
+    From：{{ info.region }}<br>
     {% endif %}
     {% if info.gender %}
-    {{ info.gender }}
+    Gender：{{ info.gender }}<br>
     {% endif %}
+    个人简介：
     {% if info.introduction %}
     {{ info.introduction }}
     {% else %}
@@ -44,5 +45,5 @@
 {#    <div class="pagination">#}
 {#        {{ macros.pagination_widget(pagination, '.index') }}#}
 {#    </div>#}
-    <p>Last Seen: {{ user.account.last_seen }}</p>
+    <p>Last Seen: {{ user.last_seen }}</p>
 {% endblock %}

@@ -30,13 +30,13 @@ class SeleniumTestCase(unittest.TestCase):
             Post.generate_fake(10)
 
             admin_role = Role.query.filter_by(permissions=0xff).first()
-            admin = Account(password='aaa', confirmed=True)
+            admin = Account(password='aaa',
+                            username='patrick',
+                            email='chengtianyang523@sina.com',
+                            confirmed=True)
             db.session.add(admin)
             db.session.flush()
-            userinfo = UserInfo()
-            userinfo.uid = admin.uid
-            userinfo.email = 'chengtianyang523@sina.com'
-            userinfo.name = 'patrick'
+            userinfo = UserInfo(uid=admin.uid)
             userinfo.role = admin_role
             db.session.add(userinfo)
             db.session.commit()
@@ -65,15 +65,15 @@ class SeleniumTestCase(unittest.TestCase):
         response = self.client.get('http://127.0.0.1:5000/')
         self.assertTrue('<h2 class="tm-gold-text tm-title">Patrick\'s Space</h2>' in self.client.page_source)
 
-        self.client.find_element_by_link_text('Login').click()
-        self.assertTrue('<h2 class="tm-gold-text tm-title">Login</h2>' in self.client.page_source)
+        self.client.find_element_by_link_text('登录').click()
+        self.assertTrue('<h2 class="tm-gold-text tm-title">登录</h2>' in self.client.page_source)
 
         self.client.find_element_by_name('email').send_keys('chengtianyang523@sina.com')
         self.client.find_element_by_name('password').send_keys('aaa')
         self.client.find_element_by_name('submit').click()
         self.assertTrue('<h2 class="tm-gold-text tm-title">Patrick\'s Space</h2>' in self.client.page_source)
 
-        self.client.find_element_by_link_text('Profile').click()
+        self.client.find_element_by_link_text('个人信息').click()
         self.assertTrue(self.client.title == 'Patrick\'s Space - Complete Profile')
 
 

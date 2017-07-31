@@ -145,14 +145,12 @@ class Account(db.Model, UserMixin):
         seed()
         for i in range(count):
             u = Account(uid=str(uuid.uuid4()),
+                        username=forgery_py.name.full_name(),
                         password=forgery_py.lorem_ipsum.word(),
                         confirmed=True)
             db.session.add(u)
             db.session.flush()
-            info = UserInfo()
-            info.uid = u.uid
-            info.email = forgery_py.internet.email_address()
-            info.name = forgery_py.name.full_name()
+            info = UserInfo(uid=u.uid)
             db.session.add(info)
             try:
                 db.session.commit()

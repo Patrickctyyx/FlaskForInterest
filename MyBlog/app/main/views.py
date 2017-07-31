@@ -39,7 +39,7 @@ def index():
 
 @main.route('/user/<username>')
 def user(username):
-    user = Account.query.filter_by(name=username).first()
+    user = Account.query.filter_by(username=username).first()
     info = UserInfo.query.get(user.uid)
     if user is None:
         abort(404)
@@ -69,7 +69,7 @@ def complete_profile():
             flash(str(e.orig).split('.')[1].capitalize() + ' is already existed!')
             return redirect(url_for('.user', username=current_user.username))
         flash('初始化完成')
-        return redirect(url_for('.user', username=current_app.username))
+        return redirect(url_for('.user', username=current_user.username))
     form.region.data = userinfo.region
     form.gender.data = userinfo.gender
     form.introduction.data = userinfo.introduction
@@ -94,9 +94,9 @@ def edit_profile():
         except IntegrityError as e:
             db.session.rollback()
             flash(str(e.orig).split('.')[1].capitalize() + ' is already existed!')
-            return redirect(url_for('.user', user=user, info=userinfo))
+            return redirect(url_for('.user', username=account.username))
         flash('信息修改成功！')
-        return redirect(url_for('.user', user=user, info=userinfo))
+        return redirect(url_for('.user', username=account.username))
     form.phone.data = account.phone
     form.region.data = userinfo.region
     form.gender.data = userinfo.gender

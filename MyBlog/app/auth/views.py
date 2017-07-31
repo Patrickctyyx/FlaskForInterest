@@ -25,7 +25,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('你已经成功登出。')
+    flash('您已经成功登出。')
     return redirect(url_for('main.index'))
 
 

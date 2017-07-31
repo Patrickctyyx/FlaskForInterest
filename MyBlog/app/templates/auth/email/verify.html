@@ -1,8 +1,9 @@
-<p>Dear,</p>
-<p>Welcome to <b>Patrick's Space</b>!</p>
-<p>To verify your account please <a href="{{ url_for('auth.reset_password', token=token, email=email, _external=True) }}">click here</a>.</p>
-<p>Alternatively, you can paste the following link in your browser's address bar:</p>
+<p>尊敬的用户,</p>
+<p>欢迎来到 <b>Patrick's Space</b>!</p>
+<p>请点击<a href="{{ url_for('auth.reset_password', token=token, email=email, _external=True) }}">这个链接</a>来验证您的邮箱。</p>
+<p>您也可以把以下链接复制到浏览器中打开。</p>
 <p>{{ url_for('auth.reset_password', token=token, email=email, _external=True) }}</p>
 <p>Sincerely,</p>
 <p>Patrick</p>
-<p><small>Note: replies to this email address are not monitored.</small></p>
+<p><small>注意：这个邮箱的回复邮件不会被监测。</small></p>
+

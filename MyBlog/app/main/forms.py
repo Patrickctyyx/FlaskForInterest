@@ -17,7 +17,7 @@ class CompleteProfileField(FlaskForm):
 
     region = StringField('所在省：', validators=[DataRequired(), Length(2, 15)])
     gender = SelectField('性别：', validators=[DataRequired()], choices=[('M', '男'), ('F', '女')])
-    introduction = TextAreaField('自我介绍：')
+    introduction = TextAreaField('个人简介：')
     submit = SubmitField('提交')
 
 
@@ -26,7 +26,7 @@ class EditProfileField(FlaskForm):
     phone = StringField('电话号码：', validators=[DataRequired(), Length(0, 16)])
     region = StringField('所在省：', validators=[DataRequired(), Length(2, 15)])
     gender = SelectField('性别：', validators=[DataRequired()], choices=[('M', '男'), ('F', '女')])
-    introduction = TextAreaField('Introduction:')
+    introduction = TextAreaField('个人简介：')
     submit = SubmitField('Submit')
 
 

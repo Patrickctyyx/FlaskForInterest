@@ -1,8 +1,8 @@
-Dear,
+尊敬的用户,
 
-Welcome to Patrick's Space!
+欢迎来到 Patrick's Space!
 
-To confirm your account please click on the following link:
+请点击以下链接来验证您的邮箱
 
 {{ url_for('auth.change_mail', token=token, email=email, _external=True) }}
 
@@ -10,4 +10,4 @@ Sincerely,
 
 Patrick
 
-Notice: replies to this email address are not monitored.
+注意：这个邮箱的回复邮件不会被监测。

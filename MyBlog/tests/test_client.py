@@ -1,7 +1,7 @@
 import unittest
 from flask import url_for
 from app import create_app, db
-from app.models import Role, UserInfo
+from app.models import Role, UserInfo, Account
 
 
 class FlaskClientTestCase(unittest.TestCase):
@@ -25,7 +25,8 @@ class FlaskClientTestCase(unittest.TestCase):
     def test_register_and_login(self):
         response = self.client.post(url_for('auth.register'), data={
             'email': 'chengtiyanyang@gmail.com',
-            'name': 'patrick',
+            'username': 'patrick',
+            'phone': '15521164491',
             'password': 'aaa',
             'password2': 'aaa'
         })
@@ -36,15 +37,14 @@ class FlaskClientTestCase(unittest.TestCase):
             'password': 'aaa'
         }, follow_redirects=True)
         data = response.get_data(as_text=True)
-        self.assertTrue('You have not confirmed your account yet' in data)
+        self.assertTrue('您还没有验证您的账号' in data)
 
-        userinfo = UserInfo.query.filter_by(email='chengtiyanyang@gmail.com').first()
-        user = userinfo.account
+        user = Account.query.filter_by(email='chengtiyanyang@gmail.com').first()
         token = user.generate_confirmation_token()
         response = self.client.get(url_for('auth.confirm', token=token), follow_redirects=True)
         data = response.get_data(as_text=True)
-        self.assertTrue('You have confirmed your account' in data)
+        self.assertTrue('你的账户已经成功确认' in data)
 
         response = self.client.get(url_for('auth.logout'), follow_redirects=True)
         data = response.get_data(as_text=True)
-        self.assertTrue('你已经成功登出。' in data)
+        self.assertTrue('您已经成功登出。' in data)
