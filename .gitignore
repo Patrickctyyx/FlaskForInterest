@@ -99,4 +99,7 @@ ENV/
 /MyBlog/migrations/
 /MyBlog/app/materialize/
 /GuessNumber/cty/
+/ReviseFlask/materialize/
+/ReviseFlask/migrations/
+/ReviseFlask/static/fonts/
 *.sqlite

@@ -1,0 +1,259 @@
+{% macro render_pagination(pagination, endpoint) %}
+
+        <ul class="pagination center-align">
+            {% if pagination.has_prev %}
+                <li class="waves-effect">
+            {% else %}
+                <li class="disabled">
+            {% endif %}<a href="{{ url_for('home', page=pagination.prev().page) }}">
+                <i class="material-icons">chevron_left</i></a></li>
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    {% if page != pagination.page %}
+                        <li class="waves-effect">
+                            <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="active"><a href="">{{ page }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li class="waves-effect"><a href="">...</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if pagination.has_next %}
+                <li class="waves-effect">
+            {% else %}
+                <li class="disabled">
+            {% endif %}<a href="{{ url_for('home', page=pagination.next().page) }}">
+                <i class="material-icons">chevron_right</i></a></li>
+        </ul>
+
+{% endmacro %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Patrick's Space{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favio.ico') }}" type="image/x-icon">
+    <script src="https://use.fontawesome.com/14c3416ccc.js"></script>
+
+    <style>
+        body {
+          display: flex;
+          min-height: 100vh;
+          flex-direction: column;
+        }
+
+        main {
+          flex: 1 0 auto;
+        }
+
+        textarea.materialize-textarea, input[type=text], input[type=tel], input[type=email] {
+          border-bottom: 1px solid white;
+        }
+
+        .input-field label {
+          color: white;
+        }
+
+        .slider .indicators .indicator-item.active {
+          background-color: #ee6e73;
+        }
+
+        .card.small {
+          height: 500px;
+        }
+
+        .card.small .card-image, .card.medium .card-image, .card.large .card-image {
+          max-height: 70%;
+          overflow: hidden;
+        }
+
+        .card .card-action a:not(.btn):not(.btn-large):not(.btn-large):not(.btn-floating) {
+          color: #ee6e73;
+          margin-right: 24px;
+          transition: color .3s ease;
+          text-transform: uppercase;
+        }
+
+        @font-face {
+          font-family: "Roboto";
+          src: local(Roboto Thin), url("/static/fonts/roboto/Roboto-Thin.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Thin.woff") format("woff");
+          font-weight: 100;
+        }
+
+        @font-face {
+          font-family: "Roboto";
+          src: local(Roboto Light), url("/static/fonts/roboto/Roboto-Light.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Light.woff") format("woff");
+          font-weight: 300;
+        }
+
+        @font-face {
+          font-family: "Roboto";
+          src: local(Roboto Regular), url("/static/fonts/roboto/Roboto-Regular.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Regular.woff") format("woff");
+          font-weight: 400;
+        }
+
+        @font-face {
+          font-family: "Roboto";
+          src: local(Roboto Medium), url("/static/fonts/roboto/Roboto-Medium.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Medium.woff") format("woff");
+          font-weight: 500;
+        }
+
+        @font-face {
+          font-family: "Roboto";
+          src: local(Roboto Bold), url("/static/fonts/roboto/Roboto-Bold.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Bold.woff") format("woff");
+          font-weight: 700;
+        }
+      </style>
+</head>
+<body>
+  <nav>
+        <div class="container">
+        <div class="nav-wrapper">
+          <a href="{{ url_for('home') }}" class="brand-logo">Patrick's Space</a>
+          <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="{{ url_for('home') }}">主页</a></li>
+            <li><a href="#">个人空间</a></li>
+            <li><a href="#">登录</a></li>
+            <li><a href="#">登出</a></li>
+          </ul>
+
+          <ul id="slide-out" class="side-nav">
+            <li><div class="userView">
+              <div class="background">
+                <img src="https://okdkbnczs.qnssl.com/img/sidebar.jpg">
+              </div>
+              <a href="#!user"><img class="circle" src="https://okdkbnczs.qnssl.com/img/avatar.jpg"></a>
+              <a href="#!name"><span class="white-text name">Patrick</span></a>
+              <a href="#!email"><span class="white-text email">chengtiyanyang@gmail.com</span></a>
+            </div></li>
+            <li><a class="waves-effect" href="#"><i class="material-icons">home</i>主页</a></li>
+            <li><a class="waves-effect" href="#"><i class="material-icons">person_pin</i>个人空间</a></li>
+            <li><a class="waves-effect" href="#"><i class="fa fa-sign-in" aria-hidden="true"></i>登录</a></li>
+            <li><a class="waves-effect" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i>登出</a></li>
+          </ul>
+        </div>
+        </div>
+      </nav>
+
+  <div class="slider">
+    <ul class="slides">
+      <li>
+        <img src="{{ url_for('static', filename='img/rainbow.jpg') }}">
+        <div class="caption center-align">
+          <h3>This is our big Tagline!</h3>
+          <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
+        </div>
+      </li>
+      <li>
+        <img src="{{ url_for('static', filename='img/purple.jpg') }}">
+        <div class="caption left-align">
+          <h3>Left Aligned Caption</h3>
+          <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  {% block body %}
+  {% endblock %}
+
+        <footer class="page-footer white-text">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <form class="col s12">
+                <h5 class="white-text">保持联系</h5>
+                <p class="grey-text text-lighten-4">我非常愿意和优秀的你成为朋友呢～</p>
+                <div class="input-field col s6">
+                  <i class="fa fa-user-circle prefix" aria-hidden="true"></i>
+                  <input id="icon_prefix" type="text" class="validate">
+                  <label for="icon_prefix">姓名/昵称</label>
+                </div>
+
+                <div class="input-field col s6">
+                  <i class="fa fa-envelope-o prefix" aria-hidden="true"></i>
+                  <input id="icon_email" type="email" class="validate">
+                  <label for="icon_email">邮箱</label>
+                </div>
+                <div class="input-field col s12">
+                  <i class="fa fa-pencil-square-o prefix" aria-hidden="true"></i>
+                  <textarea id="textarea1" class="materialize-textarea"></textarea>
+                  <label for="textarea1">我想说...</label>
+                </div>
+                <button class="btn waves-effect waves-light red lighten-3" type="submit" name="action">提交
+                  <i class="material-icons right">send</i>
+                </button>
+              </form>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h4 class="white-text">更多联系方式</h4>
+                <div class="row">
+                  <div class="col s12">
+                    <i class="small fa fa-weibo prefix" aria-hidden="true"></i>
+                    <a class="white-text text-lighten-3" style="font-size: 1.5rem" href="http://weibo.com/u/2867516010?refer_flag=1001030101_">&nbsp;微博</a>
+                  </div>
+                  <div class="col s12">
+                    <i class="small fa fa-github prefix" aria-hidden="true"></i>
+                    <a class="white-text text-lighten-3" style="font-size: 1.5rem" href="https://github.com/Patrickctyyx">&nbsp;GitHub</a>
+                  </div>
+                  <div class="col s12">
+                    <i class="small fa fa-twitter prefix" aria-hidden="true"></i>
+                    <a class="white-text text-lighten-3" style="font-size: 1.5rem" href="https://twitter.com/patrickchengty">&nbsp;Twitter</a>
+                  </div>
+                  <div class="col s12">
+                    <i class="small fa fa-instagram prefix" aria-hidden="true"></i>
+                    <a class="white-text text-lighten-3" style="font-size: 1.5rem" href="https://www.instagram.com/patrickcty/">&nbsp;Instagram</a>
+                  </div>
+                  <div class="col s12">
+
+                  </div>
+                  <div class="col s12">
+                    <div class="card red lighten-2">
+                    <div class="card-content white-text">
+                      <span class="card-title">信条</span>
+                      <p>不妥协，不合群。</p>
+                    </div>
+                  </div>
+                </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            	Copyright &copy;&nbsp;2017 Patrick's Space
+            <a class="grey-text text-lighten-4 right" href="#!">Powered by Materialize.</a>
+            </div>
+          </div>
+        </footer>
+
+      <!--Import jQuery before materialize.js-->
+      <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+      <script src="https://npmcdn.com/bootstrap@4.0.0-alpha.5/dist/js/bootstrap.min.js"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+      <script>
+      $(".button-collapse").sideNav();
+
+      $(document).ready(function(){
+        $('.slider').slider();
+        $('.slider').height(640);
+        $('.slides').height(600);
+      });
+      </script>
+</body>
+</html>
