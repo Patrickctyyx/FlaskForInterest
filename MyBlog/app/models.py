@@ -202,10 +202,9 @@ class UserInfo(db.Model):
     account = db.relationship('Account', back_populates='userinfo', uselist=False)
 
     def __init__(self, **kwargs):
-        # 此时对象还没建立，因此 self.uid 为空
-        # 因为在这里要用到 kawrgs 中的参数，因此必须手动再设置相应的值，不然就不会再使用了
-        self.uid = kwargs['uid']
-        email = Account.query.filter_by(uid=kwargs['uid']).first().email
+        # 此时对象还没建立，因此必须要用 super 方法才能调用后面的 uid
+        super(UserInfo, self).__init__(**kwargs)
+        email = Account.query.get(self.uid).email
         if email is not None and self.avatar_hash is None:
             self.avatar_hash = hashlib.md5(email.encode('utf-8')).hexdigest()
 
