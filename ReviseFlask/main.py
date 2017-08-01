@@ -1,7 +1,11 @@
+import datetime
 from flask import Flask, render_template
 from config import DevConfig
 from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField
+from wtforms.validators import DataRequired, Length
 
 app = Flask(__name__)
 app.config.from_object(DevConfig)
@@ -35,7 +39,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     text = db.Column(db.Text)
-    publish_time = db.Column(db.DateTime)
+    publish_time = db.Column(db.DateTime, default=datetime.datetime.now)
 
     comments = db.relationship(
         'Comment',
@@ -60,7 +64,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     text = db.Column(db.Text)
-    date = db.Column(db.DateTime)
+    date = db.Column(db.DateTime, default=datetime.datetime.now)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
 
     def __repr__(self):
@@ -76,6 +80,11 @@ class Tag(db.Model):
 
     def __repr__(self):
         return '<Tag \'{}\'>'.format(self.title)
+
+
+class CommentForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=255)])
+    text = TextAreaField(u'Comment', validators=[DataRequired()])
 
 
 def sidebar_data():
@@ -108,8 +117,16 @@ def home(page=1):
     )
 
 
-@app.route('/post/<int:post_id>')
+@app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
+    form = CommentForm()
+    if form.validate_on_submit():
+        new_comment = Comment()
+        new_comment.name = form.name.data
+        new_comment.text = form.text.data
+        new_comment.post_id = post_id
+        db.session.add(new_comment)
+        db.session.commit()
     post = Post.query.get_or_404(post_id)
     tags = post.tags
     comments = post.comments.order_by(Comment.date.desc()).all()
@@ -121,7 +138,8 @@ def post(post_id):
         tags=tags,
         comments=comments,
         recent=recent,
-        top_tags=top_tags
+        top_tags=top_tags,
+        form=form
     )
 
 
@@ -147,7 +165,7 @@ def user(username):
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'user.html'.title(),
+        'user.html',
         user=user,
         posts=posts,
         recent=recent,
@@ -172,7 +190,6 @@ def user(username):
 # for i in range(100):
 #     new_post = Post('Post ' + str(i))
 #     new_post.user = user
-#     new_post.publish_time = datetime.datetime.now()
 #     new_post.text = s
 #     new_post.tags = random.sample(tag_list, random.randint(1, 3))
 #     db.session.add(new_post)

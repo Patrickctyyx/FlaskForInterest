@@ -1,10 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %} - Post{% endblock %}
 
-</body>
-</html>
+{% block body %}
+    <div class="row col-sm-12">
+
+        <div class="col s9">
+            <div class="section white center-align">
+                <div class="row">
+                    <h2 class="header">{{ post.title }}</h2>
+                    {% for tag in tags %}
+                    <div class="chip">
+                        {{ tag.title }}
+                        <i class="close material-icons">close</i>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row container left-align">
+                    <p class="">{{ post.text | safe }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col s3">
+            <ul class="collection with-header">
+                <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
+                {% for post in recent %}
+                      <a class="collection-item" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a>
+                {% endfor %}
+            </ul>
+            <ul class="collection with-header">
+                <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
+                {% for tag in top_tags %}
+                      <a class="collection-item" href="{{ url_for('tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="row col-sm-12 container">
+        <div class="row left-align">
+            <h4 class="header">Comments ({{ comments | length }})</h4>
+        </div>
+        <form class="col s12" method="post" action="{{ url_for('post', post_id=post.id) }}" id="comment">
+            {{ form.hidden_tag() }}
+            <div class="input-field col s12">
+                {{ form.name.label }}
+                {% if form.name.errors %}
+                    {% for e in form.name.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.name(class_='validate') }}
+            </div>
+            <div class="input-field col s12">
+                {{ form.text.label }}
+                {% if form.text.errors %}
+                    {% for e in form.text.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.text(class_='materialize-textarea') }}
+            </div>
+            <input class="waves-effect waves-light btn" style="background-color: #ee6e73" type="submit" value="Add Comment">
+        </form>
+    </div>
+
+{% endblock %}

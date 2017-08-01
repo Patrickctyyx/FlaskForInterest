@@ -1,34 +1,70 @@
 {% macro render_pagination(pagination, endpoint) %}
 
         <ul class="pagination center-align">
-            {% if pagination.has_prev %}
-                <li class="waves-effect">
-            {% else %}
-                <li class="disabled">
-            {% endif %}<a href="{{ url_for('home', page=pagination.prev().page) }}">
-                <i class="material-icons">chevron_left</i></a></li>
+            <li>
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('home', page=pagination.prev().page) }}" aria-label="Previous">
+                {% else %}
+                    <a href="" aria-label="Previous">
+                {% endif %}
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
             {% for page in pagination.iter_pages() %}
                 {% if page %}
                     {% if page != pagination.page %}
-                        <li class="waves-effect">
-                            <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
-                        </li>
+                        <li><a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a></li>
                     {% else %}
-                        <li class="active"><a href="">{{ page }}</a></li>
+                        <li><a style="background-color: #ee6e73; color: white" href="">{{ page }}</a></li>
                     {% endif %}
                 {% else %}
-                    <li class="waves-effect"><a href="">...</a></li>
+                    <li><a>…</a><li>&nbsp;
                 {% endif %}
             {% endfor %}
-            {% if pagination.has_next %}
-                <li class="waves-effect">
-            {% else %}
-                <li class="disabled">
-            {% endif %}<a href="{{ url_for('home', page=pagination.next().page) }}">
-                <i class="material-icons">chevron_right</i></a></li>
+            <li>
+                {% if pagination.has_next %}
+                <a href="{{ url_for('home', page=pagination.next().page) }}" aria-label="Next">
+                {% else %}
+                    <a href="" aria-label="Next">
+                {% endif %}
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
         </ul>
-
 {% endmacro %}
+
+
+{#{% macro render_pagination(pagination, endpoint) %}#}
+{##}
+{#        <ul class="pagination center-align">#}
+{#            {% if pagination.has_prev %}#}
+{#                <li class="waves-effect">#}
+{#            {% else %}#}
+{#                <li class="disabled">#}
+{#            {% endif %}<a href="{{ url_for('home', page=pagination.prev().page) }}">#}
+{#                <i class="material-icons">chevron_left</i></a></li>#}
+{#            {% for page in pagination.iter_pages() %}#}
+{#                {% if page %}#}
+{#                    {% if page != pagination.page %}#}
+{#                        <li class="waves-effect">#}
+{#                            <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>#}
+{#                        </li>#}
+{#                    {% else %}#}
+{#                        <li class="active"><a href="">{{ page }}</a></li>#}
+{#                    {% endif %}#}
+{#                {% else %}#}
+{#                    <li class="waves-effect"><a href="">...</a></li>#}
+{#                {% endif %}#}
+{#            {% endfor %}#}
+{#            {% if pagination.has_next %}#}
+{#                <li class="waves-effect">#}
+{#            {% else %}#}
+{#                <li class="disabled">#}
+{#            {% endif %}<a href="{{ url_for('home', page=pagination.next().page) }}">#}
+{#                <i class="material-icons">chevron_right</i></a></li>#}
+{#        </ul>#}
+{##}
+{#{% endmacro %}#}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +79,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favio.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+
     <script src="https://use.fontawesome.com/14c3416ccc.js"></script>
 
     <style>
@@ -63,6 +100,18 @@
 
         .input-field label {
           color: white;
+        }
+
+        #comment .input-field label {
+          color: #ee6e73;
+        }
+
+        #comment textarea.materialize-textarea {
+          border-bottom: 1px solid #ee6e73;
+        }
+
+        #comment input[type=text] {
+          border-bottom: 1px solid #ee6e73;
         }
 
         .slider .indicators .indicator-item.active {
@@ -85,42 +134,47 @@
           text-transform: uppercase;
         }
 
-        @font-face {
-          font-family: "Roboto";
-          src: local(Roboto Thin), url("/static/fonts/roboto/Roboto-Thin.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Thin.woff") format("woff");
-          font-weight: 100;
+        .pagination li a {
+            border: none;
         }
 
-        @font-face {
-          font-family: "Roboto";
-          src: local(Roboto Light), url("/static/fonts/roboto/Roboto-Light.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Light.woff") format("woff");
-          font-weight: 300;
-        }
 
-        @font-face {
-          font-family: "Roboto";
-          src: local(Roboto Regular), url("/static/fonts/roboto/Roboto-Regular.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Regular.woff") format("woff");
-          font-weight: 400;
-        }
-
-        @font-face {
-          font-family: "Roboto";
-          src: local(Roboto Medium), url("/static/fonts/roboto/Roboto-Medium.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Medium.woff") format("woff");
-          font-weight: 500;
-        }
-
-        @font-face {
-          font-family: "Roboto";
-          src: local(Roboto Bold), url("/static/fonts/roboto/Roboto-Bold.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Bold.woff") format("woff");
-          font-weight: 700;
-        }
+{#        @font-face {#}
+{#          font-family: "Roboto";#}
+{#          src: local(Roboto Thin), url("/static/fonts/roboto/Roboto-Thin.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Thin.woff") format("woff");#}
+{#          font-weight: 100;#}
+{#        }#}
+{##}
+{#        @font-face {#}
+{#          font-family: "Roboto";#}
+{#          src: local(Roboto Light), url("/static/fonts/roboto/Roboto-Light.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Light.woff") format("woff");#}
+{#          font-weight: 300;#}
+{#        }#}
+{##}
+{#        @font-face {#}
+{#          font-family: "Roboto";#}
+{#          src: local(Roboto Regular), url("/static/fonts/roboto/Roboto-Regular.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Regular.woff") format("woff");#}
+{#          font-weight: 400;#}
+{#        }#}
+{##}
+{#        @font-face {#}
+{#          font-family: "Roboto";#}
+{#          src: local(Roboto Medium), url("/static/fonts/roboto/Roboto-Medium.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Medium.woff") format("woff");#}
+{#          font-weight: 500;#}
+{#        }#}
+{##}
+{#        @font-face {#}
+{#          font-family: "Roboto";#}
+{#          src: local(Roboto Bold), url("/static/fonts/roboto/Roboto-Bold.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Bold.woff") format("woff");#}
+{#          font-weight: 700;#}
+{#        }#}
       </style>
 </head>
 <body>
   <nav>
         <div class="container">
         <div class="nav-wrapper">
-          <a href="{{ url_for('home') }}" class="brand-logo">Patrick's Space</a>
+          <p href="#!" class="brand-logo">Patrick's Space</p>
           <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="{{ url_for('home') }}">主页</a></li>
