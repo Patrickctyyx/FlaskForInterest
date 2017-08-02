@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "blog/base.html" %}
 {% block title %} - Home{% endblock %}
 
 {% block body %}
@@ -14,7 +14,7 @@
                 <p>{{ post.text | truncate(255) | safe }}</p>
               </div>
               <div class="card-action">
-                <a href="{{ url_for('post', post_id=post.id) }}">Read More</a>
+                <a href="{{ url_for('.post', post_id=post.id) }}">Read More</a>
               </div>
             </div>
         {% endfor %}
@@ -23,16 +23,16 @@
             <ul class="collection with-header">
                 <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
                 {% for post in recent %}
-                      <a class="collection-item" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a>
+                      <a class="collection-item" href="{{ url_for('.post', post_id=post.id) }}">{{ post.title }}</a>
                 {% endfor %}
             </ul>
             <ul class="collection with-header">
                 <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
                 {% for tag in top_tags %}
-                      <a class="collection-item" href="{{ url_for('tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
+                      <a class="collection-item" href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
                 {% endfor %}
             </ul>
         </div>
     </div>
-    {{ render_pagination(posts, 'home') }}
+    {{ render_pagination(posts, '.home') }}
 {% endblock %}

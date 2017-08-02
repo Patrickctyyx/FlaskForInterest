@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "blog/base.html" %}
 {% block title %} - Post{% endblock %}
 
 {% block body %}
@@ -24,13 +24,13 @@
             <ul class="collection with-header">
                 <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
                 {% for post in recent %}
-                      <a class="collection-item" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a>
+                      <a class="collection-item" href="{{ url_for('.post', post_id=post.id) }}">{{ post.title }}</a>
                 {% endfor %}
             </ul>
             <ul class="collection with-header">
                 <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
                 {% for tag in top_tags %}
-                      <a class="collection-item" href="{{ url_for('tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
+                      <a class="collection-item" href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
                 {% endfor %}
             </ul>
         </div>
@@ -40,7 +40,7 @@
         <div class="row left-align">
             <h4 class="header">Comments ({{ comments | length }})</h4>
         </div>
-        <form class="col s12" method="post" action="{{ url_for('post', post_id=post.id) }}" id="comment">
+        <form class="col s12" method="post" action="{{ url_for('.post', post_id=post.id) }}" id="comment">
             {{ form.hidden_tag() }}
             <div class="input-field col s12">
                 {{ form.name.label }}

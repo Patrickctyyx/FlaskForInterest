@@ -1,15 +1,23 @@
 import datetime
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, g, session, abort, Blueprint
 from config import DevConfig
 from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
+from flask.views import View
 from wtforms import StringField, TextAreaField
 from wtforms.validators import DataRequired, Length
 
 app = Flask(__name__)
 app.config.from_object(DevConfig)
 db = SQLAlchemy(app)
+
+blog_print = Blueprint(
+    'blog',
+    __name__,
+    template_folder='template/blog',
+    url_prefix='/blog'
+)
 
 
 tags = db.Table('post_tags',
@@ -101,8 +109,44 @@ def sidebar_data():
     return recent, top_tags
 
 
+@app.before_request
+def before_request():
+    if 'user_id' in session:
+        g.user = User.query.get(session['user_id'])
+
+
+@app.route('/restricted')
+def admin():
+    if g.user is None:
+        abort(403)
+    return render_template('admin.html')
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    recent, top_tags = sidebar_data()
+    return render_template('404.html', recent=recent, top_tags=top_tags), 404
+
+
+@app.errorhandler(403)
+def page_not_found(error):
+    recent, top_tags = sidebar_data()
+    return render_template('403.html', recent=recent, top_tags=top_tags), 403
+
+
+@app.errorhandler(500)
+def page_not_found(error):
+    recent, top_tags = sidebar_data()
+    return render_template('500.html', recent=recent, top_tags=top_tags), 500
+
+
 @app.route('/')
-@app.route('/<int:page>')
+def index():
+    return redirect(url_for('blog.home'))
+
+
+@blog_print.route('/')
+@blog_print.route('/<int:page>')
 def home(page=1):
     posts = Post.query.order_by(
         Post.publish_time.desc()
@@ -110,14 +154,14 @@ def home(page=1):
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'home.html',
+        'blog/home.html',
         posts=posts,
         recent=recent,
         top_tags=top_tags
     )
 
 
-@app.route('/post/<int:post_id>', methods=['GET', 'POST'])
+@blog_print.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
     form = CommentForm()
     if form.validate_on_submit():
@@ -127,14 +171,14 @@ def post(post_id):
         new_comment.post_id = post_id
         db.session.add(new_comment)
         db.session.commit()
-        return redirect(url_for('post', post_idid=post_id))
+        return redirect(url_for('.post', post_id=post_id))
     post = Post.query.get_or_404(post_id)
     tags = post.tags
     comments = post.comments.order_by(Comment.date.desc()).all()
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'post.html',
+        'blog/post.html',
         post=post,
         tags=tags,
         comments=comments,
@@ -144,15 +188,15 @@ def post(post_id):
     )
 
 
-@app.route('/tag/<string:tag_name>')
-@app.route('/tag/<string:tag_name>/<int:page>')
+@blog_print.route('/tag/<string:tag_name>')
+@blog_print.route('/tag/<string:tag_name>/<int:page>')
 def tag(tag_name, page=1):
     tag = Tag.query.filter_by(title=tag_name).first_or_404()
     posts = tag.posts.order_by(Post.publish_time.desc()).paginate(page, 10)
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'tag.html',
+        'blog/tag.html',
         tag=tag,
         posts=posts,
         recent=recent,
@@ -160,20 +204,51 @@ def tag(tag_name, page=1):
     )
 
 
-@app.route('/user/<string:username>')
-@app.route('/user/<string:username>/<int:page>')
+@blog_print.route('/user/<string:username>')
+@blog_print.route('/user/<string:username>/<int:page>')
 def user(username, page=1):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.publish_time.desc()).paginate(page, 10)
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'user.html',
+        'blog/user.html',
         user=user,
         posts=posts,
         recent=recent,
         top_tags=top_tags
     )
+
+
+class GenericView(View):  # 定义视图类，减少重复
+    def __init__(self, template):
+        self.template = template
+        super(GenericView, self).__init__()
+
+    # 作用和普通视图函数相同
+    def dispatch_request(self):
+        page = 1
+        posts = Post.query.order_by(
+            Post.publish_time.desc()
+        ).paginate(page, 10)
+        recent, top_tags = sidebar_data()
+
+        return render_template(
+            self.template,
+            posts=posts,
+            recent=recent,
+            top_tags=top_tags
+        )
+
+
+app.add_url_rule(
+    # 第一个参数是 url
+    '/test',
+    view_func=GenericView.as_view(
+        'test',  # 指定 endpoint
+        template='home.html'
+    )
+)
 
 
 # import random
@@ -199,6 +274,7 @@ def user(username, page=1):
 #
 # db.session.commit()
 
+app.register_blueprint(blog_print)
 
 if __name__ == '__main__':
     app.run()

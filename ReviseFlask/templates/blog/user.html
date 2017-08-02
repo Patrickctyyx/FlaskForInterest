@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "blog/base.html" %}
 {% block title %} - User{% endblock %}
 
 {% block body %}
@@ -19,7 +19,7 @@
                 <p>{{ post.text | truncate(255) | safe }}</p>
               </div>
               <div class="card-action">
-                <a href="{{ url_for('post', post_id=post.id) }}">Read More</a>
+                <a href="{{ url_for('.post', post_id=post.id) }}">Read More</a>
               </div>
             </div>
         {% endfor %}
@@ -28,13 +28,13 @@
             <ul class="collection with-header">
                 <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
                 {% for post in recent %}
-                      <a class="collection-item" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a>
+                      <a class="collection-item" href="{{ url_for('.post', post_id=post.id) }}">{{ post.title }}</a>
                 {% endfor %}
             </ul>
             <ul class="collection with-header">
                 <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
                 {% for tag in top_tags %}
-                      <a class="collection-item" href="{{ url_for('tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
+                      <a class="collection-item" href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
                 {% endfor %}
             </ul>
         </div>
@@ -43,7 +43,7 @@
     <ul class="pagination center-align">
             <li>
                 {% if posts.has_prev %}
-                    <a href="{{ url_for('user', username=user.username, page=posts.prev().page) }}" aria-label="Previous">
+                    <a href="{{ url_for('.user', username=user.username, page=posts.prev().page) }}" aria-label="Previous">
                 {% else %}
                     <a href="" aria-label="Previous">
                 {% endif %}
@@ -53,7 +53,7 @@
             {% for page in posts.iter_pages() %}
                 {% if page %}
                     {% if page != posts.page %}
-                        <li><a href="{{ url_for('user', username=user.username, page=page) }}">{{ page }}</a></li>
+                        <li><a href="{{ url_for('.user', username=user.username, page=page) }}">{{ page }}</a></li>
                     {% else %}
                         <li><a style="background-color: #ee6e73; color: white" href="">{{ page }}</a></li>
                     {% endif %}
@@ -63,7 +63,7 @@
             {% endfor %}
             <li>
                 {% if posts.has_next %}
-                <a href="{{ url_for('user', username=user.username, page=posts.next().page) }}" aria-label="Next">
+                <a href="{{ url_for('.user', username=user.username, page=posts.next().page) }}" aria-label="Next">
                 {% else %}
                     <a href="" aria-label="Next">
                 {% endif %}
