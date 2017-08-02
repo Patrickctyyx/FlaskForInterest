@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from config import DevConfig
 from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
@@ -127,6 +127,7 @@ def post(post_id):
         new_comment.post_id = post_id
         db.session.add(new_comment)
         db.session.commit()
+        return redirect(url_for('post', post_idid=post_id))
     post = Post.query.get_or_404(post_id)
     tags = post.tags
     comments = post.comments.order_by(Comment.date.desc()).all()
@@ -144,14 +145,15 @@ def post(post_id):
 
 
 @app.route('/tag/<string:tag_name>')
-def tag(tag_name):
+@app.route('/tag/<string:tag_name>/<int:page>')
+def tag(tag_name, page=1):
     tag = Tag.query.filter_by(title=tag_name).first_or_404()
-    posts = tag.posts.order_by(Post.publish_time.desc()).all()
+    posts = tag.posts.order_by(Post.publish_time.desc()).paginate(page, 10)
     recent, top_tags = sidebar_data()
 
     return render_template(
         'tag.html',
-        tag=tags,
+        tag=tag,
         posts=posts,
         recent=recent,
         top_tags=top_tags
@@ -159,9 +161,10 @@ def tag(tag_name):
 
 
 @app.route('/user/<string:username>')
-def user(username):
+@app.route('/user/<string:username>/<int:page>')
+def user(username, page=1):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = user.posts.order_by(Post.publish_time.desc()).all()
+    posts = user.posts.order_by(Post.publish_time.desc()).paginate(page, 10)
     recent, top_tags = sidebar_data()
 
     return render_template(

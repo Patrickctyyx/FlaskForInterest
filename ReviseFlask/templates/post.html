@@ -64,4 +64,18 @@
         </form>
     </div>
 
+    {% for comment in comments %}
+        <div class="row col-sm-12 container">
+          <div class="col s12">
+            <div class="card-panel red accent-1">
+              <span class="white-text">
+                  <p>By:{{ comment.name }} on {{ comment.date }}</p>
+                  <p>{{ comment.text | safe }}</p>
+              </span>
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+
+
 {% endblock %}

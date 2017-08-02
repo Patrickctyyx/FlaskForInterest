@@ -1,10 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %} - User{% endblock %}
 
-</body>
-</html>
+{% block body %}
+    <div class="row">
+        <div class="col s9">
+          <div class="card red accent-1">
+            <div class="card-content white-text">
+              <span class="card-title center-align">{{ user.username }}</span>
+            </div>
+          </div>
+        {% for post in posts.items %}
+            <div class="card hoverable small">
+              <div class="card-image">
+                <img src="{{ url_for('static', filename='img/shore.jpg') }}">
+                <span class="card-title">{{ post.title }}</span>
+              </div>
+              <div class="card-content">
+                <p>{{ post.text | truncate(255) | safe }}</p>
+              </div>
+              <div class="card-action">
+                <a href="{{ url_for('post', post_id=post.id) }}">Read More</a>
+              </div>
+            </div>
+        {% endfor %}
+        </div>
+        <div class="col s3">
+            <ul class="collection with-header">
+                <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
+                {% for post in recent %}
+                      <a class="collection-item" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a>
+                {% endfor %}
+            </ul>
+            <ul class="collection with-header">
+                <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
+                {% for tag in top_tags %}
+                      <a class="collection-item" href="{{ url_for('tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <ul class="pagination center-align">
+            <li>
+                {% if posts.has_prev %}
+                    <a href="{{ url_for('user', username=user.username, page=posts.prev().page) }}" aria-label="Previous">
+                {% else %}
+                    <a href="" aria-label="Previous">
+                {% endif %}
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% for page in posts.iter_pages() %}
+                {% if page %}
+                    {% if page != posts.page %}
+                        <li><a href="{{ url_for('user', username=user.username, page=page) }}">{{ page }}</a></li>
+                    {% else %}
+                        <li><a style="background-color: #ee6e73; color: white" href="">{{ page }}</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a>…</a><li>&nbsp;
+                {% endif %}
+            {% endfor %}
+            <li>
+                {% if posts.has_next %}
+                <a href="{{ url_for('user', username=user.username, page=posts.next().page) }}" aria-label="Next">
+                {% else %}
+                    <a href="" aria-label="Next">
+                {% endif %}
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+
+{% endblock %}
