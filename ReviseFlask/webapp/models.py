@@ -1,5 +1,6 @@
 import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin, AnonymousUserMixin
 from .extensions import bcrypt
 
 db = SQLAlchemy()
@@ -10,7 +11,25 @@ tags = db.Table('post_tags',
                 )
 
 
-class User(db.Model):
+roles = db.Table('role_users',
+                 db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+                 db.Column('role.id', db.Integer, db.ForeignKey('role.id'))
+                 )
+
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+    def __init__(self, name='default'):
+        self.name = name
+
+    def __repr__(self):
+        return '<Role {}>'.format(self.name)
+
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
@@ -20,8 +39,16 @@ class User(db.Model):
         lazy='dynamic'
     )
 
+    roles = db.relationship(
+        'Role',
+        secondary=roles,
+        backref=db.backref('user', lazy='dynamic')
+    )
+
     def __init__(self, username):
         self.username = username
+        default = Role.query.filter_by(name='default').first()
+        self.roles.append(default)
 
     def __repr__(self):
         return '<User \'{}\'>'.format(self.username)
@@ -36,6 +63,10 @@ class User(db.Model):
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
+
+
+class AnomousUser(AnonymousUserMixin):
+    pass
 
 
 class Post(db.Model):

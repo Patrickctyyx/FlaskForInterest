@@ -1,9 +1,11 @@
-from flask import Blueprint, redirect, url_for, render_template, session, request, flash
+from flask import Blueprint, redirect, url_for, render_template, session, request, flash, current_app
 from webapp.forms import LoginForm, RegisterForm
 from webapp.config import Config
 from webapp.sdk import GeetestLib
 from webapp.models import db, User
 from .blog import sidebar_data
+from flask_login import login_user, logout_user, login_required
+from flask_principal import Identity, AnonymousIdentity, identity_changed
 
 main_blueprint = Blueprint(
     'main',
@@ -58,6 +60,12 @@ def login():
         else:
             result = gt.failback_validate(challenge, validate, seccode)
         if result:
+            user = User.query.filter_by(username=form.username.data).first()
+            login_user(user, remember=form.remember_me.data)
+            identity_changed.send(
+                current_app._get_current_object(),
+                identity=Identity(user.id)
+            )
             flash('登陆成功！', category='success')
             return redirect(url_for('blog.home'))
         else:
@@ -66,7 +74,13 @@ def login():
 
 
 @main_blueprint.route('/logout', methods=['GET', 'POST'])
+@login_required
 def logout():
+    logout_user()
+    identity_changed.send(
+        current_app._get_current_object(),
+        identity=AnonymousIdentity()
+    )
     flash('登出成功！', category='success')
     return redirect(url_for('blog.home'))
 

@@ -12,6 +12,7 @@ class CommentForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField('用户名', [DataRequired(), Length(max=255)])
     password = PasswordField('密码', [DataRequired()])
+    remember_me = BooleanField('记住登录状态')
 
     def validate(self):  # 在 validate_on_submit 的时候会检查
         check_validate = super(LoginForm, self).validate()

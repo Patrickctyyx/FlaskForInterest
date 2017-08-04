@@ -1,5 +1,5 @@
 import os
-basedir = os.path.abspath(os.path.pardir)
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
@@ -14,10 +14,11 @@ class ProdConfig(Config):
 
 class DevConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.pardir, 'dev.sqlite')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'dev.sqlite')
     SQLALCHEMT_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 config = {
     'dev': DevConfig
 }
+
