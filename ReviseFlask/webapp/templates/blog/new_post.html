@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %} - Post Creation{% endblock %}
+
+{% block body %}
+
+    <div class="row col-sm-12 container">
+        <div class="row center-align">
+            <h4 class="header" style="color: #ee6e73">发布新文章</h4>
+        </div>
+        <form class="col s12" method="post" action="{{ url_for('.new_post') }}" id="comment">
+            {{ form.hidden_tag() }}
+            <div class="input-field col s12">
+                {{ form.title.label }}
+                {{ form.title(class_='validate') }}
+                {% if form.title.errors %}
+                    {% for e in form.title.errors %}
+                        <p class="help-block alert-danger">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="input-field col s12">
+                {{ form.text.label }}
+                <div class="col-sm-12"><br><br></div>
+                {{ form.text(class_='validate', id='editor') }}
+                {% if form.text.errors %}
+                    {% for e in form.text.errors %}
+                        <p class="help-block alert-danger">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col s12"><br></div>
+
+            <div class="col s12">
+                <input id="embed-submit" class="waves-effect waves-light btn col s3" style="background-color: #ee6e73" type="submit" value="确认发布">
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    <script src="https://cdn.ckeditor.com/4.7.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'editor' );
+    </script>
+{% endblock %}
+

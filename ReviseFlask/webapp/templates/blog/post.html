@@ -14,10 +14,18 @@
                         <i class="close material-icons">close</i>
                     </div>
                     {% endfor %}
+                    <p>作者：<a href="{{ url_for('.user', username=post.user.username) }}">
+                        {{ post.user.username }}
+                        </a> 修改时间：{{ post.publish_time }}
+                    </p>
                 </div>
                 <div class="row container left-align">
                     <p class="">{{ post.text | safe }}</p>
                 </div>
+            </div>
+            <div class="row container">
+                    <a class="waves-effect waves-light btn red lighten-3" href="{{ url_for('.edit_post', post_id=post.id) }}">
+                        <i class="material-icons right">edit</i>修改</a>
             </div>
         </div>
         {{ sidebar() }}
