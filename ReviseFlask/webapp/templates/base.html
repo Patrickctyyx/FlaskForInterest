@@ -3,7 +3,7 @@
         <ul class="pagination center-align">
             <li>
                 {% if pagination.has_prev %}
-                    <a href="{{ url_for(endpoint, page=pagination.prev().page) }}" aria-label="Previous">
+                    <a href="{{ url_for(endpoint, page=pagination.prev().page) }}" aria-label="Previous">}
                 {% else %}
                     <a href="" aria-label="Previous">
                 {% endif %}
@@ -13,7 +13,9 @@
             {% for page in pagination.iter_pages() %}
                 {% if page %}
                     {% if page != pagination.page %}
-                        <li><a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a></li>
+                        <li>
+                            <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
+                        </li>
                     {% else %}
                         <li><a style="background-color: #ee6e73; color: white" href="">{{ page }}</a></li>
                     {% endif %}
@@ -23,7 +25,7 @@
             {% endfor %}
             <li>
                 {% if pagination.has_next %}
-                <a href="{{ url_for(endpoint, page=pagination.next().page) }}" aria-label="Next">
+                    <a href="{{ url_for(endpoint, page=pagination.next().page) }}" aria-label="Next">
                 {% else %}
                     <a href="" aria-label="Next">
                 {% endif %}
@@ -33,38 +35,24 @@
         </ul>
 {% endmacro %}
 
+{% macro sidebar() %}
 
-{#{% macro render_pagination(pagination, endpoint) %}#}
-{##}
-{#        <ul class="pagination center-align">#}
-{#            {% if pagination.has_prev %}#}
-{#                <li class="waves-effect">#}
-{#            {% else %}#}
-{#                <li class="disabled">#}
-{#            {% endif %}<a href="{{ url_for('home', page=pagination.prev().page) }}">#}
-{#                <i class="material-icons">chevron_left</i></a></li>#}
-{#            {% for page in pagination.iter_pages() %}#}
-{#                {% if page %}#}
-{#                    {% if page != pagination.page %}#}
-{#                        <li class="waves-effect">#}
-{#                            <a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>#}
-{#                        </li>#}
-{#                    {% else %}#}
-{#                        <li class="active"><a href="">{{ page }}</a></li>#}
-{#                    {% endif %}#}
-{#                {% else %}#}
-{#                    <li class="waves-effect"><a href="">...</a></li>#}
-{#                {% endif %}#}
-{#            {% endfor %}#}
-{#            {% if pagination.has_next %}#}
-{#                <li class="waves-effect">#}
-{#            {% else %}#}
-{#                <li class="disabled">#}
-{#            {% endif %}<a href="{{ url_for('home', page=pagination.next().page) }}">#}
-{#                <i class="material-icons">chevron_right</i></a></li>#}
-{#        </ul>#}
-{##}
-{#{% endmacro %}#}
+        <div class="col s3">
+            <ul class="collection with-header">
+                <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
+                {% for post in recent %}
+                      <a class="collection-item" href="{{ url_for('blog.post', post_id=post.id) }}">{{ post.title }}</a>
+                {% endfor %}
+            </ul>
+            <ul class="collection with-header">
+                <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
+                {% for tag in top_tags %}
+                      <a class="collection-item" href="{{ url_for('blog.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
+                {% endfor %}
+            </ul>
+        </div>
+
+{% endmacro %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -82,7 +70,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
 
     <script src="https://use.fontawesome.com/14c3416ccc.js"></script>
-
+    <script src="{{ url_for('static', filename='js/gt.js') }}"></script>
     <style>
         body {
           display: flex;
@@ -110,7 +98,7 @@
           border-bottom: 1px solid #ee6e73;
         }
 
-        #comment input[type=text] {
+        #comment input[type=text], input[type=password] {
           border-bottom: 1px solid #ee6e73;
         }
 
@@ -138,36 +126,6 @@
             border: none;
         }
 
-
-{#        @font-face {#}
-{#          font-family: "Roboto";#}
-{#          src: local(Roboto Thin), url("/static/fonts/roboto/Roboto-Thin.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Thin.woff") format("woff");#}
-{#          font-weight: 100;#}
-{#        }#}
-{##}
-{#        @font-face {#}
-{#          font-family: "Roboto";#}
-{#          src: local(Roboto Light), url("/static/fonts/roboto/Roboto-Light.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Light.woff") format("woff");#}
-{#          font-weight: 300;#}
-{#        }#}
-{##}
-{#        @font-face {#}
-{#          font-family: "Roboto";#}
-{#          src: local(Roboto Regular), url("/static/fonts/roboto/Roboto-Regular.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Regular.woff") format("woff");#}
-{#          font-weight: 400;#}
-{#        }#}
-{##}
-{#        @font-face {#}
-{#          font-family: "Roboto";#}
-{#          src: local(Roboto Medium), url("/static/fonts/roboto/Roboto-Medium.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Medium.woff") format("woff");#}
-{#          font-weight: 500;#}
-{#        }#}
-{##}
-{#        @font-face {#}
-{#          font-family: "Roboto";#}
-{#          src: local(Roboto Bold), url("/static/fonts/roboto/Roboto-Bold.woff2") format("woff2"), url("/static/fonts/roboto/Roboto-Bold.woff") format("woff");#}
-{#          font-weight: 700;#}
-{#        }#}
       </style>
 </head>
 <body>
@@ -179,8 +137,8 @@
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="{{ url_for('blog.home') }}">主页</a></li>
             <li><a href="#">个人空间</a></li>
-            <li><a href="#">登录</a></li>
-            <li><a href="#">登出</a></li>
+            <li><a href="{{ url_for('main.login') }}">登录</a></li>
+            <li><a href="{{ url_for('main.logout') }}">登出</a></li>
           </ul>
 
           <ul id="slide-out" class="side-nav">
@@ -220,7 +178,16 @@
     </ul>
   </div>
 
+  <div class="col s12 container">
+      {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            {{ message }}
+        </div>
+      {% endfor %}
+  </div>
+
   {% block body %}
+
   {% endblock %}
 
         <footer class="page-footer white-text">
@@ -294,6 +261,7 @@
           </div>
         </footer>
 
+  {% block script %}
       <!--Import jQuery before materialize.js-->
       <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
       <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
@@ -309,5 +277,6 @@
         $('.slides').height(600);
       });
       </script>
+  {% endblock %}
 </body>
 </html>

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="row col-sm-12">
+        <div class="col s9 center-align container">
+            <h1>{% block h1 %}{% endblock %}</h1>
+        </div>
+
+        {{ sidebar() }}
+    </div>
+{% endblock %}

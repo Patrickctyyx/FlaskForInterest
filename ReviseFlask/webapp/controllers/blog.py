@@ -1,6 +1,5 @@
-from flask import render_template, redirect, url_for, Blueprint
+from flask import render_template, redirect, url_for, Blueprint, flash
 from sqlalchemy import func
-
 from webapp.models import db, Post, Tag, Comment, User, tags
 from webapp.forms import CommentForm
 
@@ -8,7 +7,7 @@ from webapp.forms import CommentForm
 blog_print = Blueprint(
     'blog',
     __name__,
-    template_folder='template/blog',
+    template_folder='../templates/blog',
     url_prefix='/blog'
 )
 
@@ -22,7 +21,7 @@ def sidebar_data():
         Tag, func.count(tags.c.post_id).label('total')
     ).join(
         tags
-    ).group_by(Tag).order_by('total DESC').limit(5).all()
+    ).group_by(Tag).limit(5).all()
 
     return recent, top_tags
 
@@ -36,7 +35,7 @@ def home(page=1):
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'blog/home.html',
+        'home.html',
         posts=posts,
         recent=recent,
         top_tags=top_tags
@@ -60,7 +59,7 @@ def post(post_id):
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'blog/post.html',
+        'post.html',
         post=post,
         tags=tags,
         comments=comments,
@@ -78,7 +77,7 @@ def tag(tag_name, page=1):
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'blog/tag.html',
+        'tag.html',
         tag=tag,
         posts=posts,
         recent=recent,
@@ -94,28 +93,11 @@ def user(username, page=1):
     recent, top_tags = sidebar_data()
 
     return render_template(
-        'blog/user.html',
+        'user.html',
         user=user,
         posts=posts,
         recent=recent,
         top_tags=top_tags
     )
 
-
-@blog_print.errorhandler(404)
-def page_not_found(error):
-    recent, top_tags = sidebar_data()
-    return render_template('404.html', recent=recent, top_tags=top_tags), 404
-
-
-@blog_print.errorhandler(403)
-def page_not_found(error):
-    recent, top_tags = sidebar_data()
-    return render_template('403.html', recent=recent, top_tags=top_tags), 403
-
-
-@blog_print.errorhandler(500)
-def page_not_found(error):
-    recent, top_tags = sidebar_data()
-    return render_template('500.html', recent=recent, top_tags=top_tags), 500
 

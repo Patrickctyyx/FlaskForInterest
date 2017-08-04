@@ -4,6 +4,8 @@ basedir = os.path.abspath(os.path.pardir)
 
 class Config:
     SECRET_KEY = '9bf73061cbfa3acc637aae5b506bebde'
+    pc_id = 'c70916fe0d1533db47fbc6b28fa60519'
+    pc_key = '791f706df9dbaf6e0f0fe7df1f413b58'
 
 
 class ProdConfig(Config): 

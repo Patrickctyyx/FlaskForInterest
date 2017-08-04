@@ -1,5 +1,6 @@
 import datetime
 from flask_sqlalchemy import SQLAlchemy
+from .extensions import bcrypt
 
 db = SQLAlchemy()
 
@@ -24,6 +25,17 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User \'{}\'>'.format(self.username)
+
+    @property
+    def passwd(self):
+        raise AttributeError('密码不可读！')
+
+    @passwd.setter
+    def passwd(self, password):
+        self.password = bcrypt.generate_password_hash(password)
+
+    def verify_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
 
 
 class Post(db.Model):

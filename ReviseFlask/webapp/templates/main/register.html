@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %} - Login{% endblock %}
+
+{% block body %}
+
+    <div class="row col-sm-12 container">
+        <div class="row center-align">
+            <h4 class="header" style="color: #ee6e73">注册</h4>
+        </div>
+        <form class="col s12" method="post" action="{{ url_for('.register') }}" id="comment">
+            {{ form.hidden_tag() }}
+            <div class="input-field col s12">
+                {{ form.username.label }}
+                {{ form.username(class_='validate') }}
+                {% if form.username.errors %}
+                    {% for e in form.username.errors %}
+                        <p class="help-block alert-danger">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="input-field col s12">
+                {{ form.password.label }}
+                {{ form.password(class_='validate') }}
+                {% if form.password.errors %}
+                    {% for e in form.password.errors %}
+                        <p class="help-block alert-danger">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="input-field col s12">
+                {{ form.confirm.label }}
+                {{ form.confirm(class_='validate') }}
+                {% if form.confirm.errors %}
+                    {% for e in form.confirm.errors %}
+                        <p class="help-block alert-danger">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col s12"><br></div>
+            <div class="col s12" id="embed-captcha"></div>
+            <div class="col s12">
+                <p id="wait" class="show" style="color: #ee6e73">正在加载验证码......</p>
+                <p id="notice" class="hide" style="color: red">请先拖动验证码到相应位置</p>
+            </div>
+            <div class="col s12"><br></div>
+            <div class="col s12">
+                <input id="embed-submit" class="waves-effect waves-light btn col s3" style="background-color: #ee6e73" type="submit" value="确认注册">
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    <script>
+        var handlerEmbed = function (captchaObj) {
+            $("#embed-submit").click(function (e) {
+                var validate = captchaObj.getValidate();
+                if (!validate) {
+                    $("#notice")[0].className = "show";
+                    setTimeout(function () {
+                        $("#notice")[0].className = "hide";
+                    }, 2000);
+                    e.preventDefault();
+                }
+            });
+            // 将验证码加到id为captcha的元素里，同时会有三个input的值：geetest_challenge, geetest_validate, geetest_seccode
+            captchaObj.appendTo("#embed-captcha");
+            captchaObj.onReady(function () {
+                $("#wait")[0].className = "hide";
+            });
+            // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+        };
+        $.ajax({
+            // 获取id，challenge，success（是否启用failback）
+            url: "/pc-geetest/register?t=" + (new Date()).getTime(), // 加随机数防止缓存
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                // 使用initGeetest接口
+                // 参数1：配置参数
+                // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+                initGeetest({
+                    gt: data.gt,
+                    challenge: data.challenge,
+                    product: "embed", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                    offline: !data.success, // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    width: '25%'
+                    // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+                }, handlerEmbed);
+            }
+        });
+    </script>
+{% endblock %}

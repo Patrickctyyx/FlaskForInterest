@@ -1,4 +1,4 @@
-{% extends "blog/base.html" %}
+{% extends "base.html" %}
 {% block title %} - Post{% endblock %}
 
 {% block body %}
@@ -20,20 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="col s3">
-            <ul class="collection with-header">
-                <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
-                {% for post in recent %}
-                      <a class="collection-item" href="{{ url_for('.post', post_id=post.id) }}">{{ post.title }}</a>
-                {% endfor %}
-            </ul>
-            <ul class="collection with-header">
-                <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
-                {% for tag in top_tags %}
-                      <a class="collection-item" href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
-                {% endfor %}
-            </ul>
-        </div>
+        {{ sidebar() }}
     </div>
 
     <div class="row col-sm-12 container">
@@ -69,8 +56,8 @@
           <div class="col s12">
             <div class="card-panel red accent-1">
               <span class="white-text">
-                  <p>By:{{ comment.name }} on {{ comment.date }}</p>
-                  <p>{{ comment.text | safe }}</p>
+                  By:{{ comment.name }} on {{ comment.date }}<br>
+                  {{ comment.text | safe }}
               </span>
             </div>
           </div>

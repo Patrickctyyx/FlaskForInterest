@@ -1,4 +1,4 @@
-{% extends "blog/base.html" %}
+{% extends "base.html" %}
 {% block title %} - Tag{% endblock %}
 
 {% block body %}
@@ -24,23 +24,10 @@
             </div>
         {% endfor %}
         </div>
-        <div class="col s3">
-            <ul class="collection with-header">
-                <li class="collection-header red-text text-lighten-1"><h4>Recent Posts</h4></li>
-                {% for post in recent %}
-                      <a class="collection-item" href="{{ url_for('.post', post_id=post.id) }}">{{ post.title }}</a>
-                {% endfor %}
-            </ul>
-            <ul class="collection with-header">
-                <li class="collection-header red-text text-lighten-1"><h4>Popular Tags</h4></li>
-                {% for tag in top_tags %}
-                      <a class="collection-item" href="{{ url_for('.tag', tag_name=tag[0].title) }}">{{ tag[0].title }}</a>
-                {% endfor %}
-            </ul>
-        </div>
+        {{ sidebar() }}
     </div>
 
-    <ul class="pagination center-align">
+        <ul class="pagination center-align">
             <li>
                 {% if posts.has_prev %}
                     <a href="{{ url_for('.tag', tag_name=tag.title, page=posts.prev().page) }}" aria-label="Previous">
