@@ -15,6 +15,6 @@ default_permission = Permission(RoleNeed('default'))
 
 
 @login_manger.user_loader
-def load_user(userif):
+def load_user(userid):
     from .models import User
-    return User.query.get(id)
+    return User.query.get(userid)
