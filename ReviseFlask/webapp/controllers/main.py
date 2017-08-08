@@ -77,9 +77,9 @@ def login():
 @login_required
 def logout():
     logout_user()
-    identity_changed.send(
+    identity_changed.send(  # 改变身份
         current_app._get_current_object(),
-        identity=AnonymousIdentity()
+        identity=AnonymousIdentity()  # 并触发 on_identity_loaded 函数
     )
     flash('登出成功！', category='success')
     return redirect(url_for('blog.home'))
