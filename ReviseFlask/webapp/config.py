@@ -17,6 +17,11 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'dev.sqlite')
     SQLALCHEMT_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    MONGODB_SETTINGS = {
+        'db': 'local',
+        'host': 'localhost',
+        'port': 27017
+    }
 
 config = {
     'dev': DevConfig

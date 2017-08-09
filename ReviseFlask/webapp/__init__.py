@@ -1,6 +1,6 @@
 from flask import Flask
 from .config import config
-from .models import db, Role
+from .models import db, mongo, Role
 from .extensions import bcrypt, login_manger, principals
 from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
@@ -16,6 +16,7 @@ def create_app(object_name):
     bcrypt.init_app(app)
     login_manger.init_app(app)
     principals.init_app(app)
+    mongo.init_app(app)
 
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
