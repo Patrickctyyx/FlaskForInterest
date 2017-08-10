@@ -18,13 +18,13 @@ post_post_parser.add_argument(
     'title',
     type=str,
     required=True,
-    help='标题不可少！'
+    help='Title is required!'
 )
 post_post_parser.add_argument(
     'text',
     type=str,
     required=True,
-    help='正文不可少！'
+    help='Text is required!'
 )
 post_post_parser.add_argument(
     'tags',
@@ -35,10 +35,32 @@ post_post_parser.add_argument(
     'token',
     type=str,
     required=True,
-    help="Token 是发表动态时必须的！"
+    help="Auth Token is required to create posts!"
 )
 
 user_post_parser = reqparse.RequestParser()
 user_post_parser.add_argument('username', type=str, required=True)
 user_post_parser.add_argument('password', type=str, required=True)
+
+
+post_put_parser = reqparse.RequestParser()
+post_put_parser.add_argument(
+    'token',
+    type=str,
+    required=True,
+    help="Auth Token is required to edit posts!"
+)
+post_put_parser.add_argument(
+    'title',
+    type=str
+)
+post_put_parser.add_argument(
+    'text',
+    type=str
+)
+post_put_parser.add_argument(
+    'tags',
+    type=str,
+    action='append'
+)
 
