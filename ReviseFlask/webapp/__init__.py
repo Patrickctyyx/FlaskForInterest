@@ -5,6 +5,7 @@ from .extensions import bcrypt, login_manger, principals, rest_api
 from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
 from .controllers.rest.post import PostApi
+from .controllers.rest.auth import AuthApi
 from flask_login import current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
 
@@ -23,6 +24,10 @@ def create_app(object_name):
         '/api/post',
         '/api/post/<int:post_id>',
         endpoint='api'
+    )
+    rest_api.add_resource(
+        AuthApi,
+        '/api/auth'
     )
     rest_api.init_app(app)
 

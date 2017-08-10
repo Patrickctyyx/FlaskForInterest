@@ -1,8 +1,14 @@
 import datetime
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, AnonymousUserMixin
 from flask_mongoengine import MongoEngine
 from .extensions import bcrypt
+from itsdangerous import (
+    TimedJSONWebSignatureSerializer as Serializer,
+    BadSignature,
+    SignatureExpired
+)
 
 db = SQLAlchemy()
 mongo = MongoEngine()
@@ -65,6 +71,19 @@ class User(db.Model, UserMixin):
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return None
+        user = User.query.get(data['id'])
+        return user
 
 
 class AnomousUser(AnonymousUserMixin):
