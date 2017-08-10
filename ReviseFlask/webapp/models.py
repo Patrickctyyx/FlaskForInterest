@@ -141,8 +141,8 @@ class Commentm(mongo.EmbeddedDocument):
 class Postm(mongo.Document):
     title = mongo.StringField(require=True)
     publish_date = mongo.DateTimeField(default=datetime.datetime.now())
-    user = mongo.ReferenceField(User)
-    comments = mongo.ListField(mongo.EmbeddedDocumentField(Comment))
+    user = mongo.ReferenceField(Userm)
+    comments = mongo.ListField(mongo.EmbeddedDocumentField(Commentm))
     tags = mongo.ListField(mongo.StringField())
 
     meta = {'allow_inheritance': True}
