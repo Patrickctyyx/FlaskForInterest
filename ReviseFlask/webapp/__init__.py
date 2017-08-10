@@ -22,8 +22,7 @@ def create_app(object_name):
     rest_api.add_resource(
         PostApi,
         '/api/post',
-        '/api/post/<int:post_id>',
-        endpoint='api'
+        '/api/post/<int:post_id>'
     )
     rest_api.add_resource(
         AuthApi,

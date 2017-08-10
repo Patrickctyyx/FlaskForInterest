@@ -3,7 +3,7 @@ from flask import abort
 from flask_restful import Resource, fields, marshal_with
 from webapp.models import db, Post, User, Tag
 from .fields import HTMLField
-from .parser import post_get_parser, post_post_parser, post_put_parser
+from .parser import post_get_parser, post_post_parser, post_put_parser, post_delete_parser
 
 
 nested_tag_fields = {
@@ -104,3 +104,20 @@ class PostApi(Resource):
         db.session.add(post)
         db.session.commit()
         return post.id, 201
+
+    def delete(self, post_id=None):
+        if not post_id:
+            abort(400)
+
+        post = Post.query.get(post_id)
+        if not post:
+            abort(404)
+
+        args = post_delete_parser.parse_args()
+        user = User.verify_auth_token(args['token'])
+        if user != post.user:
+            abort(403)
+
+        db.session.delete(post)
+        db.session.commit()
+        return "", 204

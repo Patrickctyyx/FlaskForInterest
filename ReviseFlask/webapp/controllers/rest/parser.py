@@ -64,3 +64,10 @@ post_put_parser.add_argument(
     action='append'
 )
 
+post_delete_parser = reqparse.RequestParser()
+post_delete_parser.add_argument(
+    'token',
+    type=str,
+    required=True,
+    help="Auth Token is required to delete posts!"
+)
