@@ -1,5 +1,6 @@
 import datetime
-from flask import render_template, redirect, url_for, Blueprint, flash
+from flask import render_template, redirect, url_for, Blueprint, flash, abort
+from flask_login import current_user, login_required
 from sqlalchemy import func
 from webapp.models import db, Post, Tag, Comment, User, tags
 from webapp.forms import CommentForm, PostForm
@@ -47,10 +48,13 @@ def home(page=1):
 def post(post_id):
     form = CommentForm()
     if form.validate_on_submit():
+        if current_user.is_anonymous:
+            flash('请登录后提交评论')
+            return redirect(url_for('main.login'))
         new_comment = Comment()
-        new_comment.name = form.name.data
         new_comment.text = form.text.data
         new_comment.post_id = post_id
+        new_comment.user_id = current_user.id
         db.session.add(new_comment)
         db.session.commit()
         return redirect(url_for('.post', post_id=post_id))
@@ -71,12 +75,14 @@ def post(post_id):
 
 
 @blog_print.route('/new', methods=['GET', 'POST'])
+@login_required
 def new_post():
     form = PostForm()
 
     if form.validate_on_submit():
         new_post = Post(title=form.title.data)
         new_post.text = form.text.data
+        new_post.user_id = current_user.id
 
         db.session.add(new_post)
         db.session.commit()
@@ -87,9 +93,12 @@ def new_post():
 
 
 @blog_print.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+@login_required
 def edit_post(post_id):
 
     post = Post.query.get_or_404(post_id)
+    if post.user.id is not current_user.id or post.user.id is not 1:
+        abort(403)
     form = PostForm()
 
     if form.validate_on_submit():

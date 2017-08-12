@@ -6,6 +6,7 @@ from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
 from .controllers.rest.post import PostApi
 from .controllers.rest.auth import AuthApi
+from .controllers.rest.comment import CommentApi
 from flask_login import current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
 
@@ -27,6 +28,11 @@ def create_app(object_name):
     rest_api.add_resource(
         AuthApi,
         '/api/auth'
+    )
+    rest_api.add_resource(
+        CommentApi,
+        '/api/comments',
+        '/api/post/<int:post_id>/comments'
     )
     rest_api.init_app(app)
 

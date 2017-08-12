@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
+from flask_login import current_user
 from wtforms import StringField, TextAreaField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Length, EqualTo, URL
 from .models import User
 
 
 class CommentForm(FlaskForm):
-    name = StringField('昵称', validators=[DataRequired(), Length(max=255)])
     text = TextAreaField('评论', validators=[DataRequired()])
 
 

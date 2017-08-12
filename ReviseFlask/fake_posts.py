@@ -1,10 +1,12 @@
 import random
 import datetime
-from webapp.models import User, Tag, Post, db, Role
+from webapp.models import User, Tag, Post, db, Role, Comment
 
 
 def generate_fake_posts():
-    user = User.query.get(1)
+    user = User(username='admin')
+    user.roles = Role.query
+    user.passwd = 'aaa'
     db.session.add(user)
     db.session.flush()
     tag_one = Tag('Python')
@@ -22,6 +24,15 @@ def generate_fake_posts():
         new_post.text = s
         new_post.tags = random.sample(tag_list, random.randint(1, 3))
         db.session.add(new_post)
+        db.session.flush()
+
+        for j in range(random.randint(2, 10)):
+            new_comment = Comment()
+            new_comment.text = chr(ord('a') + j)
+            new_comment.post = new_post
+            new_comment.user = user
+            db.session.add(new_comment)
+            db.session.flush()
 
     db.session.commit()
 

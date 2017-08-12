@@ -53,6 +53,12 @@ class User(db.Model, UserMixin):
         backref=db.backref('user', lazy='dynamic')
     )
 
+    comments = db.relationship(
+        'Comment',
+        backref='user',
+        lazy='dynamic'
+    )
+
     def __init__(self, username):
         self.username = username
         default = Role.query.filter_by(name='default').first()
@@ -86,7 +92,7 @@ class User(db.Model, UserMixin):
         return user
 
 
-class AnomousUser(AnonymousUserMixin):
+class AnonymousUser(AnonymousUserMixin):
     pass
 
 
@@ -117,10 +123,10 @@ class Post(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
     text = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.datetime.now)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<Comment \'{}\'>'.format(self.text[:15])

@@ -71,3 +71,24 @@ post_delete_parser.add_argument(
     required=True,
     help="Auth Token is required to delete posts!"
 )
+
+comment_get_parser = reqparse.RequestParser()
+comment_get_parser.add_argument(
+    'page',
+    type=int,
+    location=['args', 'header'],
+    required=False
+)
+comment_get_parser.add_argument(
+    'comment_id',
+    type=int
+)
+
+comment_post_parser = reqparse.RequestParser()
+comment_post_parser.add_argument(
+    'token',
+    type=str,
+    required=True,
+    help="Auth Token is required to edit comment!"
+)
+
