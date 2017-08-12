@@ -131,3 +131,23 @@ comment_delete_parser.add_argument(
     type=int,
     required=True
 )
+
+contact_post_parser = reqparse.RequestParser()
+contact_post_parser.add_argument(
+    'c_name',
+    type=str,
+    required=True,
+    help='Name is required!'
+)
+contact_post_parser.add_argument(
+    'c_email',
+    type=str,
+    required=True,
+    help='Email is required!'
+)
+contact_post_parser.add_argument(
+    'c_text',
+    type=str,
+    required=True,
+    help='Text is required!'
+)

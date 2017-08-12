@@ -127,6 +127,7 @@
         }
 
       </style>
+
 </head>
 <body>
   <nav>
@@ -136,9 +137,12 @@
           <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="{{ url_for('blog.home') }}">主页</a></li>
-            <li><a href="#">个人空间</a></li>
+            {% if current_user.is_anonymous %}
             <li><a href="{{ url_for('main.login') }}">登录</a></li>
+            {% else %}
+            <li><a href="{{ url_for('blog.user', username=current_user.username) }}">个人空间</a></li>
             <li><a href="{{ url_for('main.logout') }}">登出</a></li>
+            {% endif %}
           </ul>
 
           <ul id="slide-out" class="side-nav">
@@ -199,21 +203,21 @@
                 <p class="grey-text text-lighten-4">我非常愿意和优秀的你成为朋友呢～</p>
                 <div class="input-field col s6">
                   <i class="fa fa-user-circle prefix" aria-hidden="true"></i>
-                  <input id="icon_prefix" type="text" class="validate">
-                  <label for="icon_prefix">姓名/昵称</label>
+                  <input id="c_name" type="text" class="validate">
+                  <label for="c_name">姓名/昵称</label>
                 </div>
 
                 <div class="input-field col s6">
                   <i class="fa fa-envelope-o prefix" aria-hidden="true"></i>
-                  <input id="icon_email" type="email" class="validate">
-                  <label for="icon_email">邮箱</label>
+                  <input id="c_email" type="email" class="validate">
+                  <label for="c_email">邮箱</label>
                 </div>
                 <div class="input-field col s12">
                   <i class="fa fa-pencil-square-o prefix" aria-hidden="true"></i>
-                  <textarea id="textarea1" class="materialize-textarea"></textarea>
-                  <label for="textarea1">我想说...</label>
+                  <textarea id="c_text" class="materialize-textarea"></textarea>
+                  <label for="c_text">我想说...</label>
                 </div>
-                <button class="btn waves-effect waves-light red lighten-3" type="submit" name="action">提交
+                <button class="btn waves-effect waves-light red lighten-3" type="submit" name="action" onclick="contactSubmit()">提交
                   <i class="material-icons right">send</i>
                 </button>
               </form>
@@ -276,6 +280,21 @@
         $('.slider').height(640);
         $('.slides').height(600);
       });
+      </script>
+      <script>
+          var contactSubmit = function () {
+              $.ajax({
+                  type: "post",
+                  url: "/api/contact",
+                  data: {
+                      c_name: $("#c_name").val(),
+                      c_email: $("#c_email").val(),
+                      c_text: $("#c_text").val()
+                  },
+                  dataType: "json",
+                  success: alert('提交成功！')
+              });
+          }
       </script>
   {% endblock %}
 </body>

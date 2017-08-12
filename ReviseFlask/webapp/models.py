@@ -145,6 +145,16 @@ class Tag(db.Model):
 available_roles = ('admin', 'poster', 'default')
 
 
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    text = db.Column(db.Text)
+
+
+###################
+# test of mongodb #
+###################
 class Userm(mongo.Document):
     username = mongo.StringField(require=True)
     password = mongo.StringField(require=True)
