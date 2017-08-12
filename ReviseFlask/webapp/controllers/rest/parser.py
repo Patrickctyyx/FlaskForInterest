@@ -83,6 +83,10 @@ comment_get_parser.add_argument(
     'comment_id',
     type=int
 )
+comment_get_parser.add_argument(
+    'user_id',
+    type=int
+)
 
 comment_post_parser = reqparse.RequestParser()
 comment_post_parser.add_argument(
@@ -91,4 +95,39 @@ comment_post_parser.add_argument(
     required=True,
     help="Auth Token is required to edit comment!"
 )
+comment_post_parser.add_argument(
+    'text',
+    type=str,
+    required=True,
+    help='Text is required!'
+)
 
+comment_put_parser = reqparse.RequestParser()
+comment_put_parser.add_argument(
+    'token',
+    type=str,
+    required=True,
+    help="Auth Token is required to edit comment!"
+)
+comment_put_parser.add_argument(
+    'text',
+    type=str
+)
+comment_put_parser.add_argument(
+    'comment_id',
+    type=int,
+    required=True
+)
+
+comment_delete_parser = reqparse.RequestParser()
+comment_delete_parser.add_argument(
+    'token',
+    type=str,
+    required=True,
+    help="Auth Token is required to edit comment!"
+)
+comment_delete_parser.add_argument(
+    'comment_id',
+    type=int,
+    required=True
+)

@@ -73,9 +73,7 @@ class PostApi(Resource):
         if not post_id:
             abort(400)
 
-        post = Post.query.get(post_id)
-        if not post:
-            abort(404)
+        post = Post.query.get_or_404(post_id)
 
         args = post_put_parser.parse_args(strict=True)
         user = User.verify_auth_token(args['token'])

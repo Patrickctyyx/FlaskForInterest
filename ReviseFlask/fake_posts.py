@@ -28,6 +28,8 @@ def generate_fake_posts():
 
         for j in range(random.randint(2, 10)):
             new_comment = Comment()
+            # ord 是用来把字符变为 ASCII 码
+            # chr 是把 ASCII 码变为字符
             new_comment.text = chr(ord('a') + j)
             new_comment.post = new_post
             new_comment.user = user
