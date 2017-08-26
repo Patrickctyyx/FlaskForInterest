@@ -1,7 +1,7 @@
 from flask import Flask
 from .config import config
 from .models import db, mongo, Role
-from .extensions import bcrypt, login_manger, principals, rest_api
+from .extensions import bcrypt, login_manger, principals, rest_api, celery
 from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
 from .controllers.rest.post import PostApi
@@ -21,6 +21,7 @@ def create_app(object_name):
     login_manger.init_app(app)
     principals.init_app(app)
     mongo.init_app(app)
+    celery.init_app(app)  # 使用的扩展不要忘了 init
     rest_api.add_resource(
         PostApi,
         '/api/post',

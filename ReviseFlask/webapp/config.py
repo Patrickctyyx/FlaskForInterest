@@ -22,6 +22,10 @@ class DevConfig(Config):
         'host': 'localhost',
         'port': 27017
     }
+    CELERY_BROKER_URL = "redis://localhost:6379"
+    # 配置名不能错，不然就注册不了相应的配置
+    # 我在这个地方就卡了很久！
+    CELERY_RESULT_BACKEND = "redis://localhost:6379"
 
 config = {
     'dev': DevConfig
