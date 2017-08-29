@@ -1,8 +1,9 @@
 from flask import Blueprint, redirect, url_for, render_template, session, request, flash, current_app
-from webapp.forms import LoginForm, RegisterForm
+from datetime import datetime
+from webapp.forms import LoginForm, RegisterForm, ReminderForm
 from webapp.config import Config
 from webapp.sdk import GeetestLib
-from webapp.models import db, User
+from webapp.models import db, User, Reminder
 from .blog import sidebar_data
 from flask_login import login_user, logout_user, login_required
 from flask_principal import Identity, AnonymousIdentity, identity_changed
@@ -100,3 +101,37 @@ def register():
         return redirect(url_for('.login'))
 
     return render_template('register.html', form=form)
+
+
+@main_blueprint.route('/reminder', methods=['GET', 'POST'])
+def reminder():
+    form = ReminderForm()
+
+    if form.validate_on_submit():
+        if form.date.data[1] is ' ':
+            day = int(form.date.data[0])
+            start = 2
+        else:
+            day = int(form.date.data[1]) + 10 * int(form.date.data[0])
+            start = 3
+        i = 0
+        for j in ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']:
+            i += 1
+            if form.date.data[start: start + 3] == j:
+                break
+        month = i
+        year = int(form.date.data[-4:])
+        hour = int(form.time.data[:2])
+        minute = int(form.time.data[3: 5])
+        if form.time.data[-2] == 'P':
+            hour += 12
+        rmd = Reminder()
+        rmd.date = datetime(year, month, day, hour, minute)
+        rmd.email = form.email.data
+        rmd.text = form.text.data
+        db.session.add(rmd)
+        db.session.commit()
+        flash('提醒已创建！')
+        return redirect(url_for('blog.home'))
+    return render_template('reminder.html', form=form)
+

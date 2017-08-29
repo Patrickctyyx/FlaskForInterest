@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %} - New Reminder{% endblock %}
+
+{% block body %}
+
+    <div class="row col-sm-12 container">
+        <div class="row center-align">
+            <h4 class="header" style="color: #ee6e73">新建提醒</h4>
+        </div>
+        <form class="col s12" method="post" action="{{ url_for('.reminder') }}" id="comment">
+            {{ form.hidden_tag() }}
+            <div class="input-field col s12">
+                {{ form.date.label }}
+                {{ form.date(class_='datepicker') }}
+{#                <input type="text" class="datepicker" name="date">#}
+            </div>
+            <div class="input-field col s12">
+                {{ form.time.label }}
+                {{ form.time(class_='timepicker', value='05:00PM') }}
+            </div>
+            <div class="input-field col s12">
+                {{ form.email.label }}
+                {{ form.email(class_='validate') }}
+                {% if form.email.errors %}
+                    {% for e in form.email.errors %}
+                        <p class="help-block alert-danger">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="input-field col s12">
+                {{ form.text.label }}
+                {% if form.text.errors %}
+                    {% for e in form.text.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.text(class_='materialize-textarea') }}
+            </div>
+
+            <div class="col s12">
+                <input id="embed-submit" class="waves-effect waves-light btn col s3" style="background-color: #ee6e73" type="submit" value="确认提交">
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+    <script>
+    $('.datepicker').pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year,
+        today: 'Today',
+        clear: 'Clear',
+        close: 'Ok',
+        closeOnSelect: false // Close upon selecting a date,
+    });
+    </script>
+
+    <script>
+    $('.timepicker').pickatime({
+        default: 'now', // Set default time: 'now', '1:30AM', '16:30'
+        fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+        twelvehour: false, // Use AM/PM or 24-hour format
+        donetext: 'OK', // text for done-button
+        cleartext: 'Clear', // text for clear-button
+        canceltext: 'Cancel', // Text for cancel-button
+        autoclose: false, // automatic close timepicker
+        ampmclickable: true, // make AM PM clickable
+        aftershow: function(){} //Function for after opening timepicker
+    });
+    </script>
+{% endblock %}

@@ -1,6 +1,6 @@
 from flask import Flask
 from .config import config
-from .models import db, mongo, Role
+from .models import db, mongo, Role, Reminder
 from .extensions import bcrypt, login_manger, principals, rest_api, celery
 from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
@@ -8,6 +8,8 @@ from .controllers.rest.post import PostApi
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.contact import ContactApi
 from .controllers.rest.comment import CommentApi
+from .tasks import on_reminder_save
+from sqlalchemy import event
 from flask_login import current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
 
@@ -17,6 +19,7 @@ def create_app(object_name):
     app.config.from_object(config[object_name])
 
     db.init_app(app)
+    event.listen(Reminder, 'after_insert', on_reminder_save)
     bcrypt.init_app(app)
     login_manger.init_app(app)
     principals.init_app(app)

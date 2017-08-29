@@ -55,3 +55,10 @@ class PostForm(FlaskForm):
     title = StringField('标题', [DataRequired(), Length(max=255)])
     text = TextAreaField('正文', [DataRequired()])
 
+
+class ReminderForm(FlaskForm):
+    date = StringField('日期', [DataRequired()])
+    time = StringField('时间', [DataRequired()])
+    email = StringField('邮箱', [DataRequired()])
+    text = TextAreaField('提醒内容', [DataRequired()])
+
