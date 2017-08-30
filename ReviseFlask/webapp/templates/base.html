@@ -126,6 +126,7 @@
             border: none;
         }
 
+        {% block styles %}{% endblock %}
       </style>
 
 </head>
@@ -184,7 +185,7 @@
 
   <div class="col s12 container">
       {% for message in get_flashed_messages() %}
-        <div class="alert alert-warning">
+        <div class="alert alert-warning" style="text-align: center">
             {{ message }}
         </div>
       {% endfor %}

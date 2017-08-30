@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block title %} - New Reminder{% endblock %}
+{% block styles %}
+    input[type=email] {
+        border-bottom: 1px solid #ee6e73;
+    }
+{% endblock %}
 
 {% block body %}
 
@@ -12,15 +17,14 @@
             <div class="input-field col s12">
                 {{ form.date.label }}
                 {{ form.date(class_='datepicker') }}
-{#                <input type="text" class="datepicker" name="date">#}
             </div>
             <div class="input-field col s12">
                 {{ form.time.label }}
-                {{ form.time(class_='timepicker', value='05:00PM') }}
+                {{ form.time(class_='timepicker') }}
             </div>
             <div class="input-field col s12">
                 {{ form.email.label }}
-                {{ form.email(class_='validate') }}
+                {{ form.email(class_='validate', type='email') }}
                 {% if form.email.errors %}
                     {% for e in form.email.errors %}
                         <p class="help-block alert-danger">{{ e }}</p>
