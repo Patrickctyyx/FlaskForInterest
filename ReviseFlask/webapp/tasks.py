@@ -101,6 +101,9 @@ def digest(self):
     msg['Subject'] = 'Weekly digest'
     msg['From'] = os.environ.get('MAIL_USERNAME')
     recipients = Contact.query.all()
+    # 也可以这样直接查找无重复的 email
+    # recipients = db.session.query(Contact.email).distinct().all()
+    # 但是返回的 email 是 tuple 中的第一个元素，因此要把它取出来...
     if len(recipients) == 0:
         return
     recipients = list(set(recipients))
