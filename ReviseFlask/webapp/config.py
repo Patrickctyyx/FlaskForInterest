@@ -1,4 +1,5 @@
 import os
+from celery.schedules import crontab
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -26,6 +27,12 @@ class DevConfig(Config):
     # 配置名不能错，不然就注册不了相应的配置
     # 我在这个地方就卡了很久！
     CELERY_RESULT_BACKEND = "redis://localhost:6379"
+    CELERYBEAT_SCHEDULE = {
+        'week-digest': {
+            'task': 'task.digest',
+            'schedule': crontab(day_of_week=6, hour='10')
+        },
+    }
 
 config = {
     'dev': DevConfig
