@@ -43,6 +43,11 @@ def multiply(x, y):
     return x * y
 
 
+@celery.task
+def hello():
+    return 'aaa'
+
+
 @celery.task(
     bind=True,
     ignore_result=True,
@@ -77,7 +82,7 @@ def digest(self):
     if date.weekday() > 3:
         date += datetime.timedelta(days=7-date.weekday())
     else:
-        date -= datetime.timedelta(days=datetime.weekday())
+        date -= datetime.timedelta(days=date.weekday())
     delta = datetime.timedelta(days=(week - 1) * 7)
     start, end = date + delta, date + delta + datetime.timedelta(days=6)
 

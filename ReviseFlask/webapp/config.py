@@ -1,4 +1,5 @@
 import os
+import datetime
 from celery.schedules import crontab
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -31,6 +32,11 @@ class DevConfig(Config):
         'week-digest': {
             'task': 'task.digest',
             'schedule': crontab(day_of_week=6, hour='10')
+        },
+        'log-every-5-seconds': {
+            'task': 'webapp.tasks.log',
+            'schedule': crontab(minute='*/1'),
+            'args': ['patrick', ]
         },
     }
 
