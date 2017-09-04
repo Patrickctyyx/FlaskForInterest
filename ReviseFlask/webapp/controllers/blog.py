@@ -97,7 +97,7 @@ def new_post():
 def edit_post(post_id):
 
     post = Post.query.get_or_404(post_id)
-    if post.user.id is not current_user.id or post.user.id is not 1:
+    if post.user.id is not current_user.id and post.user.id is not 1:
         abort(403)
     form = PostForm()
 

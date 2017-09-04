@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %} - New Reminder{% endblock %}
 {% block styles %}
-    input[type=email] {
-        border-bottom: 1px solid #ee6e73;
+    input[type=email]:not(.browser-default) {
+        border-bottom-color: #ee6e73;
     }
 {% endblock %}
 
