@@ -1,5 +1,5 @@
 import os
-import datetime
+import tempfile
 from celery.schedules import crontab
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -10,12 +10,17 @@ class Config:
     pc_key = '791f706df9dbaf6e0f0fe7df1f413b58'
 
 
-class ProdConfig(Config): 
-    pass
+class ProdConfig(Config):
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_HOST = 'localhost'
+    CACHE_REDIS_PORT = '6379'
+    CACHE_REDIS_PASSWORD = ''
+    CACHE_REDIS_DB = '0'
 
 
 class DevConfig(Config):
     DEBUG = True
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'dev.sqlite')
     SQLALCHEMT_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -39,8 +44,26 @@ class DevConfig(Config):
             'args': ['patrick', ]
         },
     }
+    CACHE_TYPE = 'null'
+
+
+class TestConfig(Config):
+    db_file = tempfile.NamedTemporaryFile()
+
+    DEBUG = True
+    DEBUG_TB_ENABLED = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'test.sqlite')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    CACHE_TYPE = 'null'
+    WTF_CSRF_ENABLED = False
+
+    CELERY_BROKER_URL = "redis://localhost:6379"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
 
 config = {
-    'dev': DevConfig
+    'dev': DevConfig,
+    'test': TestConfig
 }
 

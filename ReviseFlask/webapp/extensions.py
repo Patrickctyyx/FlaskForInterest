@@ -3,6 +3,8 @@ from flask_login import LoginManager
 from flask_principal import Principal, Permission, RoleNeed
 from flask_restful import Api
 from flask_celery import Celery
+from flask_debugtoolbar import DebugToolbarExtension
+from flask_cache import Cache
 from flask import request
 from gzip import GzipFile
 from io import BytesIO
@@ -24,6 +26,10 @@ default_permission = Permission(RoleNeed('default'))
 rest_api = Api()
 
 celery = Celery()
+
+debug_toolbar = DebugToolbarExtension()
+
+cache = Cache()
 
 
 @login_manger.user_loader

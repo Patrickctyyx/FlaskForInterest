@@ -1,7 +1,7 @@
 from flask import Flask
 from .config import config
 from .models import db, mongo, Role, Reminder
-from .extensions import bcrypt, login_manger, principals, rest_api, celery
+from .extensions import bcrypt, login_manger, principals, rest_api, celery, debug_toolbar, cache
 from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
 from .controllers.rest.post import PostApi
@@ -44,6 +44,8 @@ def create_app(object_name):
         '/api/contact'
     )
     rest_api.init_app(app)
+    debug_toolbar.init_app(app)
+    cache.init_app(app)
 
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):

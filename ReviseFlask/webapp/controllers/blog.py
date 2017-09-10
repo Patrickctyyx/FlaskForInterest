@@ -1,9 +1,10 @@
 import datetime
-from flask import render_template, redirect, url_for, Blueprint, flash, abort
+from flask import render_template, redirect, url_for, Blueprint, flash, abort, request
 from flask_login import current_user, login_required
 from sqlalchemy import func
 from webapp.models import db, Post, Tag, Comment, User, tags
 from webapp.forms import CommentForm, PostForm
+from ..extensions import cache
 
 
 blog_print = Blueprint(
@@ -14,6 +15,7 @@ blog_print = Blueprint(
 )
 
 
+@cache.cached(timeout=7200, key_prefix='sidebar_data')
 def sidebar_data():
     recent = Post.query.order_by(
         Post.publish_time.desc()
@@ -30,6 +32,7 @@ def sidebar_data():
 
 @blog_print.route('/')
 @blog_print.route('/<int:page>')
+@cache.cached(timeout=60)
 def home(page=1):
     posts = Post.query.order_by(
         Post.publish_time.desc()
@@ -45,6 +48,7 @@ def home(page=1):
 
 
 @blog_print.route('/post/<int:post_id>', methods=['GET', 'POST'])
+@cache.cached(timeout=60)
 def post(post_id):
     form = CommentForm()
     if form.validate_on_submit():
@@ -119,6 +123,7 @@ def edit_post(post_id):
 
 @blog_print.route('/tag/<string:tag_name>')
 @blog_print.route('/tag/<string:tag_name>/<int:page>')
+@cache.cached(timeout=60)
 def tag(tag_name, page=1):
     tag = Tag.query.filter_by(title=tag_name).first_or_404()
     posts = tag.posts.order_by(Post.publish_time.desc()).paginate(page, 10)
@@ -135,6 +140,7 @@ def tag(tag_name, page=1):
 
 @blog_print.route('/user/<string:username>')
 @blog_print.route('/user/<string:username>/<int:page>')
+@cache.cached(timeout=60)
 def user(username, page=1):
     user = User.query.filter_by(username=username).first_or_404()
     posts = user.posts.order_by(Post.publish_time.desc()).paginate(page, 10)

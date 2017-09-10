@@ -40,6 +40,8 @@ def generate_fake_posts():
 
 
 def init_roles():
+    db.create_all()
+
     role1 = Role('default')
     db.session.add(role1)
     role2 = Role('admin')
