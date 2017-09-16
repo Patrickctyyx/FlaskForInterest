@@ -1,10 +1,11 @@
+import os
 from flask import Flask
 from .config import config
 from .models import db, mongo, Role, Reminder, User, Post, Comment, Tag, Contact
 from .extensions import bcrypt, login_manger, principals, rest_api, celery, debug_toolbar, cache, admin
 from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
-from .controllers.admin import CustomView, CustomModelView
+from .controllers.admin import CustomView, CustomModelView, CustomFileAdmin
 from .controllers.rest.post import PostApi
 from .controllers.rest.auth import AuthApi
 from .controllers.rest.contact import ContactApi
@@ -49,6 +50,11 @@ def create_app(object_name):
     cache.init_app(app)
     admin.init_app(app)
     admin.add_view(CustomView(name='Custom'))
+    admin.add_view(CustomFileAdmin(
+        os.path.join(os.path.dirname(__file__), 'static'),
+        '/static/',
+        name='Static Files'
+    ))
     models = [User, Reminder, Post, Role, Comment, Contact, Tag]
 
     for model in models:
