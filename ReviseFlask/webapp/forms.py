@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, BooleanField
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField, widgets
 from wtforms.validators import DataRequired, Length, EqualTo
 from .models import User
 
@@ -61,4 +61,14 @@ class ReminderForm(FlaskForm):
     time = StringField('时间', [DataRequired()])
     email = StringField('邮箱', [DataRequired()])
     text = TextAreaField('提醒内容', [DataRequired()])
+
+
+class CKTextAreaWidget(widgets.TextArea):
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault('class_', 'ckeditor')
+        return super(CKTextAreaWidget, self).__call__(field, **kwargs)
+
+
+class CKTextAreaField(TextAreaField):
+    widget = CKTextAreaWidget()
 

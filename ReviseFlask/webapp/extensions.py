@@ -5,6 +5,7 @@ from flask_restful import Api
 from flask_celery import Celery
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cache import Cache
+from flask_admin import Admin
 from flask import request
 from gzip import GzipFile
 from io import BytesIO
@@ -30,6 +31,8 @@ celery = Celery()
 debug_toolbar = DebugToolbarExtension()
 
 cache = Cache()
+
+admin = Admin()
 
 
 @login_manger.user_loader

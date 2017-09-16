@@ -1,0 +1,8 @@
+{% extends 'admin/model/edit.html' %}
+{% block tail %}
+    {{ super() }}
+    <script src="https://cdn.ckeditor.com/4.7.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'text' );
+    </script>
+{% endblock %}
