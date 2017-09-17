@@ -67,7 +67,7 @@ def login():
                 current_app._get_current_object(),
                 identity=Identity(user.id)
             )
-            flash('登陆成功！', category='success')
+            flash('登录成功！', category='success')
             return redirect(url_for('blog.home'))
         else:
             flash('登录失败')
