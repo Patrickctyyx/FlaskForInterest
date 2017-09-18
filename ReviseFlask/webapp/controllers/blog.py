@@ -1,7 +1,9 @@
 import datetime
 from flask import render_template, redirect, url_for, Blueprint, flash, abort, request
 from flask_login import current_user, login_required
+from flask_principal import Permission, UserNeed
 from sqlalchemy import func
+from webapp.extensions import poster_permission, admin_permission
 from webapp.models import db, Post, Tag, Comment, User, tags
 from webapp.forms import CommentForm, PostForm
 from ..extensions import cache
@@ -79,6 +81,7 @@ def post(post_id):
 
 
 @blog_print.route('/new', methods=['GET', 'POST'])
+@poster_permission.require(http_exception=403)
 @login_required
 def new_post():
     form = PostForm()
@@ -97,12 +100,18 @@ def new_post():
 
 
 @blog_print.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+@poster_permission.require(http_exception=403)
 @login_required
 def edit_post(post_id):
 
     post = Post.query.get_or_404(post_id)
-    if post.user.id is not current_user.id and post.user.id is not 1:
+    # if post.user.id is not current_user.id and post.user.id is not 1:
+    #     abort(403)
+    permission = Permission(UserNeed(post.user_id))
+
+    if not (permission.can() or admin_permission.can()):
         abort(403)
+
     form = PostForm()
 
     if form.validate_on_submit():

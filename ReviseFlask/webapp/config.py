@@ -24,11 +24,11 @@ class DevConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'dev.sqlite')
     SQLALCHEMT_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    MONGODB_SETTINGS = {
-        'db': 'local',
-        'host': 'localhost',
-        'port': 27017
-    }
+    # MONGODB_SETTINGS = {
+    #     'db': 'local',
+    #     'host': 'localhost',
+    #     'port': 27017
+    # }
     CELERY_BROKER_URL = "redis://localhost:6379"
     # 配置名不能错，不然就注册不了相应的配置
     # 我在这个地方就卡了很久！

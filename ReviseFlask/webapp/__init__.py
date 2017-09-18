@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from .config import config
-from .models import db, mongo, Role, Reminder, User, Post, Comment, Tag, Contact
+from .models import db, Role, Reminder, User, Post, Comment, Tag, Contact
 from .extensions import bcrypt, login_manger, principals, rest_api, celery, debug_toolbar, cache, admin
 from .controllers.blog import blog_print
 from .controllers.main import main_blueprint
@@ -25,7 +25,7 @@ def create_app(object_name):
     bcrypt.init_app(app)
     login_manger.init_app(app)
     principals.init_app(app)
-    mongo.init_app(app)
+    # mongo.init_app(app)
     celery.init_app(app)  # 使用的扩展不要忘了 init
     rest_api.add_resource(
         PostApi,

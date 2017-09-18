@@ -3,7 +3,7 @@ from datetime import datetime
 from webapp.forms import LoginForm, RegisterForm, ReminderForm
 from webapp.config import Config
 from webapp.sdk import GeetestLib
-from webapp.models import db, User, Reminder
+from webapp.models import db, User, Reminder, Role
 from .blog import sidebar_data
 from flask_login import login_user, logout_user, login_required
 from flask_principal import Identity, AnonymousIdentity, identity_changed
@@ -93,6 +93,7 @@ def register():
     if form.validate_on_submit():
         user = User(form.username.data)
         user.passwd = form.password.data
+        user.roles.append(Role.query.get(3))
 
         db.session.add(user)
         db.session.commit()

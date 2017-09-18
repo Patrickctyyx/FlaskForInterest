@@ -5,7 +5,7 @@ from webapp.models import User, Tag, Post, db, Role, Comment
 
 def generate_fake_posts():
     user = User(username='admin')
-    user.roles = Role.query
+    user.roles = Role.query.all()
     user.passwd = 'aaa'
     db.session.add(user)
     db.session.flush()
