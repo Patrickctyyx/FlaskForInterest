@@ -69,6 +69,7 @@
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
 
+    {% block headlink %}{% endblock %}
     <script src="https://use.fontawesome.com/14c3416ccc.js"></script>
     <script src="{{ url_for('static', filename='js/gt.js') }}"></script>
     <style>

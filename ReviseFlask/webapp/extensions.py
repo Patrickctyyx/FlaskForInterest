@@ -72,6 +72,7 @@ class GZip:
 
         return response
 
+
 flask_gzip = GZip()
 
 

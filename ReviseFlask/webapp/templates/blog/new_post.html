@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %} - Post Creation{% endblock %}
+{#{% block headlink %}<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">{% endblock %}#}
 
 {% block body %}
 
@@ -30,6 +31,10 @@
             </div>
             <div class="col s12"><br></div>
 
+{#            <div class="col s12" id="app">#}
+{#                <markdown-editor v-model="content"></markdown-editor>#}
+{#            </div>#}
+
             <div class="col s12">
                 <input id="embed-submit" class="waves-effect waves-light btn col s3" style="background-color: #ee6e73" type="submit" value="确认发布">
             </div>
@@ -44,5 +49,15 @@
     <script>
         CKEDITOR.replace( 'editor' );
     </script>
+
+{#    <script src="http://cdn.bootcss.com/vue/2.1.4/vue.min.js"></script>#}
+{#      <!-- markdown editor component -->#}
+{#      <script src="{{ url_for('static', filename='js/index.js') }}"></script>#}
+{#      <script type="text/javascript">#}
+{#        var vue = new Vue({#}
+{#          el: '#app',#}
+{#          data: { content: '# hello world' }#}
+{#        })#}
+{#      </script>#}
 {% endblock %}
 
